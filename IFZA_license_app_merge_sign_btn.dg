@@ -126,6 +126,8 @@ for each  license_app in license_app_details
 		file_number = ifnull(license_app.get("File_Number")," ");
 		country_of_birth = ifnull(license_app.get("Country_of_Birth")," ");
 		company_member_name = ifnull(license_app.get("Name")," ");
+		uae_resident = ifnull(license_app.get("UAE_Resident")," ");
+		nos = ifnull(license_app.get("Number_of_Shares")," ");
 		if(license_app.get("Passport_Issued_Date") != null)
 		{
 			ppid = ifnull(license_app.get("Passport_Issued_Date").tostring("MMM dd, yyyy")," ");
@@ -196,6 +198,8 @@ for each  license_app in license_app_details
 		InsideParam1.put("Image_1",passport_image);
 		InsideParam1.put("Passport_Image_URL",passport_url);
 		InsideParam1.put("Name",company_member_name);
+		InsideParam1.put("UAE_Resident",uae_resident);
+		InsideParam1.put("Number_of_Shares",nos);
 		company_member_list_2.add(InsideParam1);
 	}
 	//validate the roles if it's multiple or no GM
@@ -280,6 +284,8 @@ if(iterator_counter > 0 || iterator_counter == 1)
 	passport_url_1 = ifnull(company_member_list_2.get(0).get("Passport_Image_URL"),"");
 	passport_url_1 = ifnull(company_member_list_2.get(0).get("Passport_Image_URL"),"");
 	company_member_name_1 = ifnull(company_member_list_2.get(0).get("Name"),"");
+	uae_resident_1 = ifnull(company_member_list_2.get(0).get("UAE_Resident"),"");
+	nos1 = ifnull(company_member_list_2.get(0).get("Number_of_Shares"),"");
 }
 if(iterator_counter > 1 || iterator_counter == 2)
 {
@@ -319,6 +325,8 @@ if(iterator_counter > 1 || iterator_counter == 2)
 	passport_image_2 = ifnull(company_member_list_2.get(1).get("Image_1"),"");
 	passport_url_2 = ifnull(company_member_list_2.get(1).get("Passport_Image_URL"),"");
 	company_member_name_2 = ifnull(company_member_list_2.get(1).get("Name"),"");
+	uae_resident_2 = ifnull(company_member_list_2.get(1).get("UAE_Resident"),"");
+	nos2 = ifnull(company_member_list_2.get(1).get("Number_of_Shares"),"");
 }
 if(iterator_counter > 2 || iterator_counter == 3)
 {
@@ -356,6 +364,8 @@ if(iterator_counter > 2 || iterator_counter == 3)
 	passport_image_3 = ifnull(company_member_list_2.get(2).get("Image_1"),"");
 	passport_url_3 = ifnull(company_member_list_2.get(2).get("Passport_Image_URL"),"");
 	company_member_name_3 = ifnull(company_member_list_2.get(2).get("Name"),"");
+	uae_resident_3 = ifnull(company_member_list_2.get(2).get("UAE_Resident"),"");
+	nos3 = ifnull(company_member_list_2.get(2).get("Number_of_Shares"),"");
 }
 if(iterator_counter > 3 || iterator_counter == 4)
 {
@@ -393,6 +403,8 @@ if(iterator_counter > 3 || iterator_counter == 4)
 	passport_image_4 = ifnull(company_member_list_2.get(3).get("Image_1"),"");
 	passport_url_4 = ifnull(company_member_list_2.get(3).get("Passport_Image_URL"),"");
 	company_member_name_4 = ifnull(company_member_list_2.get(3).get("Name"),"");
+	uae_resident_4 = ifnull(company_member_list_2.get(3).get("UAE_Resident"),"");
+	nos4 = ifnull(company_member_list_2.get(3).get("Number_of_Shares"),"");
 }
 if(iterator_counter > 4 || iterator_counter == 5)
 {
@@ -430,6 +442,8 @@ if(iterator_counter > 4 || iterator_counter == 5)
 	passport_image_5 = ifnull(company_member_list_2.get(4).get("Image_1"),"");
 	passport_url_5 = ifnull(company_member_list_2.get(4).get("Passport_Image_URL"),"");
 	company_member_name_5 = ifnull(company_member_list_2.get(4).get("Name"),"");
+	uae_resident_5 = ifnull(company_member_list_2.get(4).get("UAE_Resident"),"");
+	nos5 = ifnull(company_member_list_2.get(4).get("Number_of_Shares"),"");
 }
 if(iterator_counter > 5 || iterator_counter == 6)
 {
@@ -467,6 +481,8 @@ if(iterator_counter > 5 || iterator_counter == 6)
 	passport_image_6 = ifnull(company_member_list_2.get(5).get("Image_1"),"");
 	passport_url_6 = ifnull(company_member_list_2.get(5).get("Passport_Image_URL"),"");
 	company_member_name_6 = ifnull(company_member_list_2.get(5).get("Name"),"");
+	uae_resident_6 = ifnull(company_member_list_2.get(5).get("UAE_Resident"),"");
+	nos6 = ifnull(company_member_list_2.get(5).get("Number_of_Shares"),"");
 }
 if(iterator_counter > 6 || iterator_counter == 7)
 {
@@ -504,9 +520,12 @@ if(iterator_counter > 6 || iterator_counter == 7)
 	passport_image_7 = ifnull(company_member_list_2.get(6).get("Image_1"),"");
 	passport_url_7 = ifnull(company_member_list_2.get(6).get("Passport_Image_URL"),"");
 	company_member_name_7 = ifnull(company_member_list_2.get(6).get("Name"),"");
+	uae_resident_7 = ifnull(company_member_list_2.get(6).get("UAE_Resident"),"");
+	nos7 = ifnull(company_member_list_2.get(6).get("Number_of_Shares"),"");
 }
 if((passport_file_status != false || passport_file_status == true) && general_manager_counter == 1 && cm_valid_counter == iterator_counter && t_and_c_files != "" && ifza_t_and_c == 1 && tlz_t_and_c == 1 && ifza_office_pricing == 1 && ifza_property_pricelist == 1)
 {
+	info "Company Member GM: " + company_member_gm;
 	InsideParam2 = Map();
 	InsideParam2.put("general_manager",company_member_gm);
 	InsideParam2.put("New_License_Application_Type",new_license_app_type);
@@ -536,7 +555,7 @@ if((passport_file_status != false || passport_file_status == true) && general_ma
 	InsideParam2.put("fifth_Business_Activity_Name",fifth_business_activity_name);
 	InsideParam2.put("sixth_Business_Activity",sixth_business_activity);
 	InsideParam2.put("sixth_Business_Activity_Name",sixth_business_activity_name);
-	InsideParam2.put("seventh_Business_Activity",seventh_business_activity_name);
+	InsideParam2.put("seventh_Business_Activity",seventh_business_activity);
 	InsideParam2.put("seventh_Business_Activity_Name",seventh_business_activity_name);
 	InsideParam2.put("Type_of_Business",type_of_business);
 	InsideParam2.put("Shareholding_Type",shareholding_type);
@@ -792,13 +811,27 @@ if((passport_file_status != false || passport_file_status == true) && general_ma
 	InsideParam2.put("shareholder5",shareholder5);
 	InsideParam2.put("shareholder6",shareholder6);
 	InsideParam2.put("shareholder7",shareholder7);
+	InsideParam2.put("uae_resident_1",uae_resident_1);
+	InsideParam2.put("uae_resident_2",uae_resident_2);
+	InsideParam2.put("uae_resident_3",uae_resident_3);
+	InsideParam2.put("uae_resident_4",uae_resident_4);
+	InsideParam2.put("uae_resident_5",uae_resident_5);
+	InsideParam2.put("uae_resident_6",uae_resident_6);
+	InsideParam2.put("uae_resident_7",uae_resident_7);
+	InsideParam2.put("nos1",nos1);
+	InsideParam2.put("nos2",nos2);
+	InsideParam2.put("nos3",nos3);
+	InsideParam2.put("nos4",nos4);
+	InsideParam2.put("nos5",nos5);
+	InsideParam2.put("nos6",nos6);
+	InsideParam2.put("nos7",nos7);
 	company_member_list.add(InsideParam2);
 	outsideParam = Map();
 	outsideParam.put("doc_name","License Application Form");
 	file = zoho.writer.mergeAndStore("gsdv5efae1522184e412c9e4e4d8d800f868d",company_member_list,outsideParam,"writercrm2");
-	info "file: " + file;
+	info "last file: " + file;
 	forSignature = file.getJson("document_id").toString();
-	info "signature: " + forSignature;
+	info "last signature: " + forSignature;
 	// recepient1_map = Map();
 	// recepient1_map.put("recipient_1",gm_email);
 	// recepient1_map.put("recipient_name",gm_fname + " " + gm_lname);
@@ -986,9 +1019,9 @@ if((passport_file_status != false || passport_file_status == true) && general_ma
 	if(response.getJson("status").containsIgnoreCase("success"))
 	{
 		//Trigger the Terms and Conditions and other attachments
-		app_map = Map();
-		app_map.put("License_App_Trigger",true);
-		app_res = zoho.crm.updateRecord("Applications1",application_id,app_map,{"trigger":{"workflow"}});
+		// 		app_map = Map();
+		// 		app_map.put("License_App_Trigger",true);
+		// 		app_res = zoho.crm.updateRecord("Applications1",application_id,app_map,{"trigger":{"workflow"}});
 		return "You Successfully Merge and Send the document for Signature!";
 	}
 	else
