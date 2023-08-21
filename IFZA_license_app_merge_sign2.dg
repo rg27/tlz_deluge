@@ -1,3 +1,4 @@
+app_details = zoho.crm.getRecordById("Applications1", application_id);
 sign_fields = zoho.sign.getFieldIds();
 for each  sign_field in sign_fields.getjson("field_types")
 {
@@ -8,14 +9,15 @@ for each  sign_field in sign_fields.getjson("field_types")
 		sign_field_type_name = sign_field.getjson("field_type_name");
 	}
 }
-application_details = zoho.crm.getRecordById("Applications1",application_id);
+// application_details = zoho.crm.getRecordById("Applications1",application_id);
+application_details = zoho.crm.getRelatedRecords("New_License_Application1", "Applications1", application_id);
 filesList = list();
 company_member_list = List();
 iterator_counter = 0;
-license_type = ifnull(application_details.get("License_Type"),"");
+license_type = ifnull(application_details.getjson("License_Type"),"");
 // info "License Type: " + license_type;
-account_name = application_details.get("Account_Name").get("name");
-terms_and_conditions = ifnull(application_details.get("Terms_and_Conditions"),"");
+account_name = app_details.get("Account_Name").get("name");
+terms_and_conditions = ifnull(app_details.get("Terms_and_Conditions"),"");
 for each  terms_and_condition in terms_and_conditions
 {
 	file_id = terms_and_condition.getJson("file_Id");
@@ -27,19 +29,20 @@ for each  terms_and_condition in terms_and_conditions
 	];
 	filesList.add(download_response);
 }
-license_app_details = zoho.crm.getRelatedRecords("Applications_Company_Members","Applications1",application_id);
+license_app_details = zoho.crm.getRelatedRecords("Company_Members","Applications1",application_id);
+info "License App Details: " + license_app_details;
 for each  license_app in license_app_details
 {
 	iterator_counter = iterator_counter + 1;
-	company_email = ifnull(license_app.get("Email"),"");
-	company_fname = ifnull(license_app.get("First_Name")," ");
-	company_lname = ifnull(license_app.get("Last_Name")," ");
-	passport_files = ifnull(license_app.get("Passport_file")," ");
-	if(license_app.get("Roles_s").containsIgnoreCase("General Manager/Representative"))
+	company_email = ifnull(license_app.getjson("Email"),"");
+	company_fname = ifnull(license_app.getjson("First_Name")," ");
+	company_lname = ifnull(license_app.getjson("Last_Name")," ");
+	passport_files = ifnull(license_app.getjson("Passport_file")," ");
+	if(license_app.getjson("Roles_s").containsIgnoreCase("General Manager/Representative"))
 	{
-		gm_email = ifnull(license_app.get("Email"),"");
-		gm_fname = ifnull(license_app.get("First_Name"),"");
-		gm_lname = ifnull(license_app.get("Last_Name"),"");
+		gm_email = ifnull(license_app.getjson("Email"),"");
+		gm_fname = ifnull(license_app.getjson("First_Name"),"");
+		gm_lname = ifnull(license_app.getjson("Last_Name"),"");
 		gm_name = gm_fname + " " + gm_lname;
 	}
 	for each  passport_file in passport_files
@@ -716,7 +719,7 @@ response_final = zoho.sign.submitRequest(req_id,dataMap,"sign_crm");
 ////////////////////////////////////////////////////////////////////////////////////////
 //Change Ownership
 req_id = created_document_response.getjson("requests").get("request_id");
-email_id = application_details.get("Owner").get("email");
+email_id = application_details.getjson("Owner").get("email");
 // info "Email ID: " + email_id;
 requestMap = invokeurl
 [
