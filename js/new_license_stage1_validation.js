@@ -1,7 +1,5 @@
 var app_type = ZDK.Page.getField("Type").getValue();
 var app_stage = ZDK.Page.getField("New_Resident_Visa_Stage").getValue();
-
-
 if (app_type == "New Trade License")
 {
     if (app_stage == "Start")

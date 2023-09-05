@@ -857,7 +857,7 @@ if(contact_partner_only == true && stage.containsIgnoreCase("Send Client For Sig
 		app_map = Map();
 		app_map.put("License_App_Trigger",true);
 		app_res = zoho.crm.updateRecord("Applications1",application_id,app_map,{"trigger":{"workflow"}});
-		return "Successfully Download!";
+		return "Successfully Downloaded!";
 	}
 }
 else
