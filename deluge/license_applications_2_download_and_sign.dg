@@ -442,6 +442,7 @@ if(contact_partner_only == false)
 			name_1 = first_name_1 + " " + last_name_1;
 			if(gm_name == name_1)
 			{
+				info "First: " + gm_name + " " + name_1;
 				fieldList.add(company_member1_map);
 			}
 			else
@@ -484,6 +485,7 @@ if(contact_partner_only == false)
 			name_2 = first_name_2 + " " + last_name_2;
 			if(gm_name == name_2)
 			{
+				info "Second: " + gm_name + " " + name_2;
 				fieldList.add(company_member2_map);
 			}
 			else
@@ -525,6 +527,7 @@ if(contact_partner_only == false)
 			name_3 = first_name_3 + " " + last_name_3;
 			if(gm_name == name_3)
 			{
+				info "Third: " + gm_name + " " + name_3;
 				fieldList.add(company_member3_map);
 			}
 			else
@@ -566,6 +569,7 @@ if(contact_partner_only == false)
 			name_4 = first_name_4 + " " + last_name_4;
 			if(gm_name == name_4)
 			{
+				info "Forth: " + gm_name + " " + name_4;
 				fieldList.add(company_member4_map);
 			}
 			else
@@ -607,6 +611,7 @@ if(contact_partner_only == false)
 			name_5 = first_name_5 + " " + last_name_5;
 			if(gm_name == name_5)
 			{
+				info "Fifth: " + gm_name + " " + name_5;
 				fieldList.add(company_member5_map);
 			}
 			else
@@ -648,6 +653,7 @@ if(contact_partner_only == false)
 			name_6 = first_name_6 + " " + last_name_6;
 			if(gm_name == name_6)
 			{
+				info "Sixth: " + gm_name + " " + name_6;
 				fieldList.add(company_member6_map);
 			}
 			else
@@ -687,8 +693,9 @@ if(contact_partner_only == false)
 			first_name_7 = company_member_list.get(6).get("First_Name");
 			last_name_7 = company_member_list.get(6).get("Last_Name");
 			name_7 = first_name_7 + " " + last_name_7;
-			if(gm_name == name_6)
+			if(gm_name == name_7)
 			{
+				info "Seventh: " + gm_name + " " + name_7;
 				fieldList.add(company_member7_map);
 			}
 			else
