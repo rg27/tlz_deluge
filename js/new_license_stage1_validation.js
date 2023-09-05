@@ -17,7 +17,6 @@ if (app_type == "New Trade License")
         log("Terms and conditions: " + tc_and_other_files);
         if (tc_and_other_files != null)
         {
-                
             var application_new_license_form = ZDK.Apps.CRM.Connections.invoke("all_crm_modules", "https://www.zohoapis.com/crm/v2/Applications1/" + application_id + "/New_License_Application1", "GET", 1, parameters, headers);
             var application_company_members = ZDK.Apps.CRM.Connections.invoke("all_crm_modules", "https://www.zohoapis.com/crm/v2/Applications1/" + application_id + "/Company_Members", "GET", 1, parameters, headers);
             var application_new_license_forms_string = JSON.stringify(application_new_license_form);
@@ -30,7 +29,6 @@ if (app_type == "New Trade License")
                 const number_of_shareholder = JSON.stringify(application_new_license_form._details.statusMessage.data[0].Number_of_Shareholders);
                 log("Number of Shares: " + number_of_shares);
                 log("Number of Shareholder: " + number_of_shareholder)
-            
                 var company_members = application_company_members._details.statusMessage.data;
                 var company_member_length =   company_members.length;
                 log("Company Members Length: " + company_member_length);
@@ -42,14 +40,22 @@ if (app_type == "New Trade License")
                 var tlz_t_and_c_counter = 0;
                 var ifza_office_pricing_counter = 0;
                 var ifza_property_pricelist_counter = 0;
-                company_members.forEach(function(company_member) {
+                var shareholder_counter = 0;
+                company_members.forEach(function (company_member) {
+                if (company_member.Roles_s.includes("Shareholder"))
+                {
+                    shareholder_counter = shareholder_counter + 1;
+                }
+
+                //Get the Number of share of Shareholders
                 sum_of_number_of_share = sum_of_number_of_share + company_member.Number_of_Shares;
+                
                 //validate and count the CM valid field
                 if ( company_member.CM_Valid == true)
                 {
                     cm_valid_counter = cm_valid_counter + 1;
                 }
-
+                //validate and count passport files
                 if ( company_member.Passport_file != undefined && company_member.Passport_file != "")
                 {
                     total_passport = total_passport + 1;
@@ -61,6 +67,8 @@ if (app_type == "New Trade License")
                     gm_counter = gm_counter + 1;
                 }});
 
+                // log("Shareholder Counter: " + shareholder_counter)
+                // ZDK.Client.showAlert('Shareholder Counter: ' + shareholder_counter);
                 //terms and condition files loop
                 var application_upload_files = JSON.stringify(tc_and_other_files);
                 tc_and_other_files.forEach(function (tc_and_other_file) {
@@ -97,7 +105,7 @@ if (app_type == "New Trade License")
                 }
 
                 //Number of Shareholder validation
-                if ( number_of_shareholder != company_member_length)
+                if ( number_of_shareholder != shareholder_counter)
                 {
                     ZDK.Client.showMessage('Number of Shareholders is not equal', { type: 'error' });
                     return false;
