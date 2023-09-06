@@ -1,0 +1,54 @@
+company_member_details = zoho.crm.getRecordById("Company_Members",company_member_id);
+contact_id = company_member_details.get("Contact_Name").get("id");
+mp = Map();
+mp.put("Subform_Status_trigger","1");
+res = zoho.crm.updateRecord("Contacts",contact_id.toLong(),mp,{"trigger":{"workflow"}});
+info res;
+/////Update Shareholder Informations In Account
+
+account_id = company_member_details.get("Account").get("id");
+info account_id;
+contact_id = company_member_details.get("Contact_Name").get("id");
+info "Contact ID: " + contact_id;
+new_license_id = company_member_details.get("New_License_Company_Members").get("id");
+cm_number_of_shares = company_member_details.get("Number_of_Shares");
+new_license_details = zoho.crm.getRecordById("New_License_Forms",new_license_id.toLong());
+total_number_of_shares = new_license_details.get("Number_of_Shares");
+percent_share = cm_number_of_shares / total_number_of_shares * 100;
+percent_share_decimal = percent_share.toDecimal().round(2);
+account_details = zoho.crm.getRecordById("Accounts",account_id.toLong());
+shareholder_infos = account_details.get("Shareholders_Information");
+subform_shareholder_list = List();
+info "Shareholder info: " + shareholder_infos.size();
+if(shareholder_infos.size() == 0)
+{
+	mp1 = Map();
+	mp1.put("Contact_Name",contact_id);
+	subform_shareholder_list.add(mp1);
+	info "MP 1";
+}
+else
+{
+	for each  share in shareholder_infos
+	{
+		subform_row_contact_id = share.getjson("Contact_Name").get("id");
+		if(subform_row_contact_id != contact_id)
+		{
+			mp2 = Map();
+			mp2.put("id",share.getjson("id"));
+			subform_shareholder_list.add(mp2);
+			info "MP 2";
+		}
+		else
+		{
+			mp3 = Map();
+			mp3.put("Contact_Name",contact_id);
+			subform_shareholder_list.add(mp3);
+			info "MP 3";
+		}
+	}
+}
+final_map = Map();
+final_map.put("Shareholders_Information",subform_shareholder_list);
+update_shareholder_res = zoho.crm.updateRecord("Accounts",account_id.toLong(),final_map,{"trigger":{"workflow"}});
+info update_shareholder_res;
