@@ -682,7 +682,7 @@ for each  document in documents
 		first_name_7 = company_member_list.get(6).get("First_Name");
 		last_name_7 = company_member_list.get(6).get("Last_Name");
 		name_7 = first_name_7 + " " + last_name_7;
-		if(gm_name == name_6)
+		if(gm_name == name_7)
 		{
 			fieldList.add(company_member7_map);
 		}
