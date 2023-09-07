@@ -18,103 +18,112 @@ else
 	company_member_list = List();
 	for each  license_app in license_app_details
 	{
-		iterator_counter = iterator_counter + 1;
-		member_role = ifnull(license_app.get("Roles_s"),"");
-		if(member_role.containsIgnoreCase("General Manager"))
+		roles = license_app.get("Roles_s");
+		if(roles.notContains("General Manager/Representative") && roles.notContains("Secretary") && roles.notContains("Director") && roles.notContains("Shareholder"))
 		{
-			gm_name = ifnull(license_app.get("First_Name")," ") + " " + ifnull(license_app.get("Last_Name")," ");
-			gm_email = ifnull(license_app.get("Email"),"");
-			info "GM Name: " + gm_name;
-			info "GM Email: " + gm_email;
-		}
-		company_email = ifnull(license_app.get("Email"),"");
-		company_fname = ifnull(license_app.get("First_Name")," ");
-		company_mname = ifnull(license_app.get("Middle_Name")," ");
-		company_lname = ifnull(license_app.get("Last_Name")," ");
-		title = ifnull(license_app.get("Title"),"");
-		company_passport_number = ifnull(license_app.get("Passport_Number")," ");
-		number_of_share = ifnull(license_app.get("Number_of_Shares")," ");
-		gender = ifnull(license_app.get("Gender")," ");
-		mobile = ifnull(license_app.get("Mobile")," ");
-		date_of_birth = ifnull(license_app.get("Date_of_Birth")," ");
-		//Date of Birth Validation
-		if(license_app.getJson("Date_of_Birth") != null)
-		{
-			date_of_birth = ifnull(license_app.getJson("Date_of_Birth").toString("dd-MMM-yyyy"),"");
+			info "True!";
+			//nothing
 		}
 		else
 		{
-			date_of_birth = ifnull(license_app.getJson("Date_of_Birth"),"");
+			iterator_counter = iterator_counter + 1;
+			member_role = ifnull(license_app.get("Roles_s"),"");
+			if(member_role.containsIgnoreCase("General Manager"))
+			{
+				gm_name = ifnull(license_app.get("First_Name")," ") + " " + ifnull(license_app.get("Last_Name")," ");
+				gm_email = ifnull(license_app.get("Email"),"");
+				info "GM Name: " + gm_name;
+				info "GM Email: " + gm_email;
+			}
+			company_email = ifnull(license_app.get("Email"),"");
+			company_fname = ifnull(license_app.get("First_Name")," ");
+			company_mname = ifnull(license_app.get("Middle_Name")," ");
+			company_lname = ifnull(license_app.get("Last_Name")," ");
+			title = ifnull(license_app.get("Title"),"");
+			company_passport_number = ifnull(license_app.get("Passport_Number")," ");
+			number_of_share = ifnull(license_app.get("Number_of_Shares")," ");
+			gender = ifnull(license_app.get("Gender")," ");
+			mobile = ifnull(license_app.get("Mobile")," ");
+			date_of_birth = ifnull(license_app.get("Date_of_Birth")," ");
+			//Date of Birth Validation
+			if(license_app.getJson("Date_of_Birth") != null)
+			{
+				date_of_birth = ifnull(license_app.getJson("Date_of_Birth").toString("dd-MMM-yyyy"),"");
+			}
+			else
+			{
+				date_of_birth = ifnull(license_app.getJson("Date_of_Birth"),"");
+			}
+			passport_issue_date = ifnull(license_app.get("Passport_Issued_Date")," ");
+			//Passport Issued Date Validation
+			if(license_app.getJson("Passport_Issued_Date") != null)
+			{
+				passport_issue_date = ifnull(license_app.getJson("Passport_Issued_Date").toString("dd-MMM-yyyy"),"");
+			}
+			else
+			{
+				passport_issue_date = ifnull(license_app.getJson("Date_of_Birth"),"");
+			}
+			//Passport Expiry Date Validation
+			if(license_app.getJson("Passport_Expiry_Date") != null)
+			{
+				passport_expiry_date = ifnull(license_app.getJson("Passport_Expiry_Date").toString("dd-MMM-yyyy"),"");
+			}
+			else
+			{
+				passport_expiry_date = ifnull(license_app.getJson("Passport_Expiry_Date"),"");
+			}
+			passport_country_of_issue = ifnull(license_app.getJson("Passport_Country_of_Issue"),"");
+			passport_place_os_issue = ifnull(license_app.getJson("Passport_Place_of_Issue"),"");
+			nationality = ifnull(license_app.getJson("Nationality"),"");
+			uae_resident = ifnull(license_app.getJson("UAE_Resident"),"");
+			emirates_id_number = ifnull(license_app.getJson("Emirates_ID_Number"),"");
+			address_line_1 = ifnull(license_app.getJson("Address_Line_1"),"");
+			address_line_2 = ifnull(license_app.getJson("Address_Line_2"),"");
+			city = ifnull(license_app.getJson("City"),"");
+			state = ifnull(license_app.getJson("State_Province"),"");
+			po = ifnull(license_app.getJson("PO_Box"),"");
+			postal_code = ifnull(license_app.getJson("Postal_Code"),"");
+			country = ifnull(license_app.getJson("Country"),"");
+			passport_image = ifnull(license_app.getJson("Image_1"),"");
+			passport_file = ifnull(license_app.getJson("Passport_file"),"");
+			InsideParam = Map();
+			InsideParam.put("Roles_s",member_role);
+			InsideParam.put("Email",company_email);
+			InsideParam.put("First_Name",company_fname);
+			InsideParam.put("Last_Name",company_lname);
+			InsideParam.put("Title",title);
+			InsideParam.put("Passport_Number",company_passport_number);
+			InsideParam.put("Middle_Name",company_mname);
+			InsideParam.put("Number_of_Shares",number_of_share);
+			InsideParam.put("Gender",gender);
+			InsideParam.put("Mobile",mobile);
+			InsideParam.put("Date_of_Birth",date_of_birth);
+			InsideParam.put("Passport_Issued_Date",passport_issue_date);
+			InsideParam.put("Passport_Expiry_Date",passport_expiry_date);
+			InsideParam.put("Passport_Country_of_Issue",passport_country_of_issue);
+			InsideParam.put("Passport_Place_of_Issue",passport_place_os_issue);
+			InsideParam.put("Nationality",nationality);
+			InsideParam.put("UAE_Resident",uae_resident);
+			InsideParam.put("Emirates_ID_Number",emirates_id_number);
+			address_line_1 = ifnull(license_app.getJson("Address_Line_1"),"");
+			address_line_2 = ifnull(license_app.getJson("Address_Line_2"),"");
+			city = ifnull(license_app.getJson("City"),"");
+			state = ifnull(license_app.getJson("State_Province"),"");
+			po = ifnull(license_app.getJson("PO_Box"),"");
+			postal_code = ifnull(license_app.getJson("Postal_Code"),"");
+			country = ifnull(license_app.getJson("Country"),"");
+			InsideParam.put("Address_Line_1",address_line_1);
+			InsideParam.put("Address_Line_2",address_line_2);
+			InsideParam.put("City",city);
+			InsideParam.put("State_Province",state);
+			InsideParam.put("PO_Box",po);
+			InsideParam.put("Postal_Code",postal_code);
+			InsideParam.put("Country",country);
+			InsideParam.put("Passport_file",passport_file);
+			InsideParam.put("Image_1",passport_image);
+			company_member_list.add(InsideParam);
 		}
-		passport_issue_date = ifnull(license_app.get("Passport_Issued_Date")," ");
-		//Passport Issued Date Validation
-		if(license_app.getJson("Passport_Issued_Date") != null)
-		{
-			passport_issue_date = ifnull(license_app.getJson("Passport_Issued_Date").toString("dd-MMM-yyyy"),"");
-		}
-		else
-		{
-			passport_issue_date = ifnull(license_app.getJson("Date_of_Birth"),"");
-		}
-		//Passport Expiry Date Validation
-		if(license_app.getJson("Passport_Expiry_Date") != null)
-		{
-			passport_expiry_date = ifnull(license_app.getJson("Passport_Expiry_Date").toString("dd-MMM-yyyy"),"");
-		}
-		else
-		{
-			passport_expiry_date = ifnull(license_app.getJson("Passport_Expiry_Date"),"");
-		}
-		passport_country_of_issue = ifnull(license_app.getJson("Passport_Country_of_Issue"),"");
-		passport_place_os_issue = ifnull(license_app.getJson("Passport_Place_of_Issue"),"");
-		nationality = ifnull(license_app.getJson("Nationality"),"");
-		uae_resident = ifnull(license_app.getJson("UAE_Resident"),"");
-		emirates_id_number = ifnull(license_app.getJson("Emirates_ID_Number"),"");
-		address_line_1 = ifnull(license_app.getJson("Address_Line_1"),"");
-		address_line_2 = ifnull(license_app.getJson("Address_Line_2"),"");
-		city = ifnull(license_app.getJson("City"),"");
-		state = ifnull(license_app.getJson("State_Province"),"");
-		po = ifnull(license_app.getJson("PO_Box"),"");
-		postal_code = ifnull(license_app.getJson("Postal_Code"),"");
-		country = ifnull(license_app.getJson("Country"),"");
-		passport_image = ifnull(license_app.getJson("Image_1"),"");
-		passport_file = ifnull(license_app.getJson("Passport_file"),"");
-		InsideParam = Map();
-		InsideParam.put("Roles_s",member_role);
-		InsideParam.put("Email",company_email);
-		InsideParam.put("First_Name",company_fname);
-		InsideParam.put("Last_Name",company_lname);
-		InsideParam.put("Title",title);
-		InsideParam.put("Passport_Number",company_passport_number);
-		InsideParam.put("Middle_Name",company_mname);
-		InsideParam.put("Number_of_Shares",number_of_share);
-		InsideParam.put("Gender",gender);
-		InsideParam.put("Mobile",mobile);
-		InsideParam.put("Date_of_Birth",date_of_birth);
-		InsideParam.put("Passport_Issued_Date",passport_issue_date);
-		InsideParam.put("Passport_Expiry_Date",passport_expiry_date);
-		InsideParam.put("Passport_Country_of_Issue",passport_country_of_issue);
-		InsideParam.put("Passport_Place_of_Issue",passport_place_os_issue);
-		InsideParam.put("Nationality",nationality);
-		InsideParam.put("UAE_Resident",uae_resident);
-		InsideParam.put("Emirates_ID_Number",emirates_id_number);
-		address_line_1 = ifnull(license_app.getJson("Address_Line_1"),"");
-		address_line_2 = ifnull(license_app.getJson("Address_Line_2"),"");
-		city = ifnull(license_app.getJson("City"),"");
-		state = ifnull(license_app.getJson("State_Province"),"");
-		po = ifnull(license_app.getJson("PO_Box"),"");
-		postal_code = ifnull(license_app.getJson("Postal_Code"),"");
-		country = ifnull(license_app.getJson("Country"),"");
-		InsideParam.put("Address_Line_1",address_line_1);
-		InsideParam.put("Address_Line_2",address_line_2);
-		InsideParam.put("City",city);
-		InsideParam.put("State_Province",state);
-		InsideParam.put("PO_Box",po);
-		InsideParam.put("Postal_Code",postal_code);
-		InsideParam.put("Country",country);
-		InsideParam.put("Passport_file",passport_file);
-		InsideParam.put("Image_1",passport_image);
-		company_member_list.add(InsideParam);
 	}
 	application_date = zoho.currentdate.getDate();
 	partner = "Trade License Zone - FZCO";
