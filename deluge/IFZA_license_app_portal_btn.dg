@@ -3,10 +3,14 @@ attached_signed_app = application_details.get("IFZA_App_Form_Link");
 attached_tcs_ifza_tlz = application_details.get("TLZ_T_Cs_Link");
 info attached_tcs_ifza_tlz;
 info attached_signed_app;
+
+//Check if the attached TCs of IFZA and TLZ field is empty
 if(attached_tcs_ifza_tlz == null || attached_signed_app == null)
 {
 	return "Please attached the Signed Application Form and T&Cs TLZ & IFZA!";
 }
+
+
 else
 {
 	new_license_app_details = zoho.crm.getRelatedRecords("New_License_Application1","Applications1",application_id);
