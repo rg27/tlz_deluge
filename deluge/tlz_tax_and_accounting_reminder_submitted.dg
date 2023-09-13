@@ -5,12 +5,12 @@ account_id = application_details.get("Account_Name").get("id");
 account_details = zoho.crm.getRecordById("Accounts",account_id.toLong());
 pc_will_not_receive_email = account_details.get("PC_will_not_receive_Emails");
 account_type = account_details.get("Account_Type");
-tlz_tax_and_accounting = new_license_details.get("TLZ_Tax_and_Account_Reminder_Days");
-info "TLZ Tax and Accounting: " + tlz_tax_and_accounting;
+pc_email = account_details.get("PC_Email");
+info "PC Email: " + pc_email;
 if(pc_will_not_receive_email != true && account_type.notContains("Transferred to Authority") && account_type.notContains("Transferred to Competitor") && account_type.notContains("TLZ Company") && account_type.notContains("Cancelled"))
 {
 	template_data = {"id":3769920000163547993};
-	email_payload = {"data":{{"from":{"email":"support@tlz.ae"},"to":{{"email":"rey@tlz.ae"}},"cc":{{"email":"support@tlz.ae"}},"bcc":{{"email":"rey@tlz.ae"}},"org_email":true,"mail_format":"html","template":template_data}}};
+	email_payload = {"data":{{"from":{"email":"support@tlz.ae"},"to":{{"email":pc_email}},"cc":{{"email":"support@tlz.ae"}},"bcc":{{"email":"rey@tlz.ae"}},"org_email":true,"mail_format":"html","template":template_data}}};
 	url1 = "https://www.zohoapis.com/crm/v2.1/New_License_Forms/" + license_id + "/actions/send_mail";
 	response = invokeurl
 	[
@@ -36,20 +36,6 @@ if(pc_will_not_receive_email != true && account_type.notContains("Transferred to
 			connection:"send_mail"
 		];
 		info response1;
-	}
-	if(tlz_tax_and_accounting == null)
-	{
-		taxmp = Map();
-		taxmp.put("TLZ_Tax_and_Account_Reminder_Days","18");
-		update_nlf = zoho.crm.updateRecord("New_License_Forms",license_id,taxmp);
-		info "Update NLF: " + update_nlf;
-	}
-	if(tlz_tax_and_accounting == 18 || tlz_tax_and_accounting == "18")
-	{
-		taxmp = Map();
-		taxmp.put("TLZ_Tax_and_Account_Reminder_Days","60");
-		update_nlf = zoho.crm.updateRecord("New_License_Forms",license_id,taxmp);
-		info "Update NLF: " + update_nlf;
 	}
 }
 else
