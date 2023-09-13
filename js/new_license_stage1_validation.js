@@ -1,5 +1,7 @@
 var app_type = ZDK.Page.getField("Type").getValue();
 var app_stage = ZDK.Page.getField("New_Resident_Visa_Stage").getValue();
+
+
 if (app_type == "New Trade License")
 {
     if (app_stage == "Start")
@@ -23,8 +25,27 @@ if (app_type == "New Trade License")
             log("App Company Members Stringify: " + application_company_members_string);
             if (application_new_license_forms_string.includes("data") && application_company_members_string.includes("data"))
             {
+                const business_activity_1 = JSON.stringify(application_new_license_form._details.statusMessage.data[0].first_Business_Activity);
+                const business_activity_name_1 = JSON.stringify(application_new_license_form._details.statusMessage.data[0].first_Business_Activity_Name);
+                const business_activity_2 = JSON.stringify(application_new_license_form._details.statusMessage.data[0].second_Business_Activity);
+                const business_activity_name_2 = JSON.stringify(application_new_license_form._details.statusMessage.data[0].second_Business_Activity_Name);
+                const business_activity_3 = JSON.stringify(application_new_license_form._details.statusMessage.data[0].third_Business_Activity);
+                const business_activity_name_3 = JSON.stringify(application_new_license_form._details.statusMessage.data[0].third_Business_Activity_Name);
+                const business_activity_4 = JSON.stringify(application_new_license_form._details.statusMessage.data[0].forth_Business_Activity);
+                const business_activity_name_4 = JSON.stringify(application_new_license_form._details.statusMessage.data[0].forth_Business_Activity_Name);
+                const business_activity_5 = JSON.stringify(application_new_license_form._details.statusMessage.data[0].fifth_Business_Activity);
+                const business_activity_name_5 = JSON.stringify(application_new_license_form._details.statusMessage.data[0].fifth_Business_Activity_Name);
+                const business_activity_6 = JSON.stringify(application_new_license_form._details.statusMessage.data[0].sixth_Business_Activity);
+                const business_activity_name_6 = JSON.stringify(application_new_license_form._details.statusMessage.data[0].sixth_Business_Activity_Name);
+                const business_activity_7 = JSON.stringify(application_new_license_form._details.statusMessage.data[0].seventh_Business_Activity);
+                const business_activity_name_7 = JSON.stringify(application_new_license_form._details.statusMessage.data[0].seventh_Business_Activity_Name);
+                
+
+                const nlf_valid = JSON.stringify(application_new_license_form._details.statusMessage.data[0].NLF_Valid);
                 const number_of_shares = JSON.stringify(application_new_license_form._details.statusMessage.data[0].Number_of_Shares);
+                const total_share_capital = JSON.stringify(application_new_license_form._details.statusMessage.data[0].Total_Share_Capital);
                 const number_of_shareholder = JSON.stringify(application_new_license_form._details.statusMessage.data[0].Number_of_Shareholders);
+                const share_value = JSON.stringify(application_new_license_form._details.statusMessage.data[0].Share_Value);            
                 log("Number of Shares: " + number_of_shares);
                 log("Number of Shareholder: " + number_of_shareholder)
                 var company_members = application_company_members._details.statusMessage.data;
@@ -95,6 +116,8 @@ if (app_type == "New Trade License")
                 log("Sum of Number of Shares: " + sum_of_number_of_share);
                 log("Total CM Valid Counter : " + cm_valid_counter);
 
+              
+
                 //Number of Shares validation
                 if ( number_of_shares != sum_of_number_of_share)
                 {
@@ -160,13 +183,126 @@ if (app_type == "New Trade License")
                     ZDK.Client.showMessage('IFZA Property List file is not added.', { type: 'error' });
                     return false;
                 }
+
+                //Number of Shareholder validation
+                log("Number of Shareholders - validation: " + number_of_shareholder)
+                if (number_of_shareholder != null || number_of_shareholder != undefined)
+                {
+                    if (number_of_shareholder >= 1 && number_of_shareholder <= 50)
+                    {
+                        
+                    }
+                    else
+                    {
+                        ZDK.Client.showMessage("The 'Number of Shareholder' should be whole number from 1-50.", { type: 'error' });
+                        return false;
+                    }
+                }
+
+                //Total Share Capital value validation
+                let tsc_reminder = total_share_capital % 1000;
+                log("Total Share Capital - validation: "+ total_share_capital)
+                if (total_share_capital != null || total_share_capital != undefined)
+                {
+                    if ((total_share_capital >= 10000 && total_share_capital <= 10000000) && (tsc_reminder == 0))
+                    {
+                    
+
+                    }
+                    else
+                    {
+                        ZDK.Client.showMessage("The 'Total Share Capital' should be whole number from 10,000 - 10,000,000. And should be in multiples of 1,000", { type: 'error' });
+                        return false;
+                    }
+                }
+
+                //Total Share Value validation
+                if (share_value != null || share_value != undefined)
+                {
+                    if ((share_value >= 10 && share_value < total_share_capital))
+                    {       
+                    }
+                    else {
+                        //Show an error of Share Value
+                        ZDK.Client.showMessage("The 'Share Value' should be whole number. The value should be greater than or equal to 10 but less than total share capital", { type: 'error' });
+                        return false;
+                    }
+                }
+                let total_number_of_shares = total_share_capital / share_value;
+                //Calculate Share capital per shareholder
+                log("Total Number of Shares: " + total_number_of_shares);
+
+
+                //Get the Total Number of Shares
+                if (total_number_of_shares %  1 === 0)
+                {
+
+                }
+                else
+                {
+                    //Show an error of Number of Shares
+                    ZDK.Client.showMessage('The Number of Shares is: ' + total_number_of_shares +  ' and not a whole number', { type: 'error' });
+                    return false;
+                }
+
+           
+                //NLF Validation
+                if ( nlf_valid != "true")
+                {
+                    ZDK.Client.showMessage('New License Form is not valid.', { type: 'error' });
+                    return false;
+                }
+
+                //Business Activities Validation
+         
+                if (business_activity_1 != 'null' && business_activity_name_1 === 'null')
+                {
+                    ZDK.Client.showMessage('First Business Activity Name is empty', { type: 'error' });
+                    return false;
+                }
+
+                if (business_activity_2 != "null" && business_activity_name_2 ===  'null')
+                {
+                    ZDK.Client.showMessage('Second Business Activity Name is empty', { type: 'error' });
+                    return false;
+                }
+
+                if (business_activity_3 != 'null' && business_activity_name_3 === 'null')
+                {
+                    ZDK.Client.showMessage('Third Business Activity Name is empty', { type: 'error' });
+                    return false;
+                }
+
+                if (business_activity_4 != 'null' && business_activity_name_4 === 'null')
+                {
+                    ZDK.Client.showMessage('Forth Business Activity Name is empty', { type: 'error' });
+                    return false;
+                }
+
+                if (business_activity_5 != 'null' && business_activity_name_5 === 'null')
+                {
+                    ZDK.Client.showMessage('Fifth Business Activity Name is empty', { type: 'error' });
+                    return false;
+                }
+
+                if (business_activity_6 != 'null' && business_activity_name_6 === 'null')
+                {
+                    ZDK.Client.showMessage('Sixth Business Activity Name is empty', { type: 'error' });
+                    return false;
+                }
+
+                if (business_activity_7 != 'null' && business_activity_name_7 === 'null')
+                {
+                    ZDK.Client.showMessage('Seventh Business Activity Name is empty', { type: 'error' });
+                    return false;
+                }
+
             }
             else
             {
                 ZDK.Client.showMessage('Error! Either New License Application or Company Members module is empty.', { type: 'error' });
                 return false;
             }
-            
         }
         else
         {
