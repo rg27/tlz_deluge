@@ -1,0 +1,922 @@
+//Get the Name of VA Applicant field
+app_Details = zoho.crm.getRecordById("Applications1",application_id);
+app_no = app_Details.get("Name");
+info app_no;
+new_license_app_details = zoho.crm.getRelatedRecords("New_License_Application1","Applications1",application_id);
+info new_license_app_details;
+new_license_id = new_license_app_details.getjson("id");
+license_app_details = zoho.crm.getRelatedRecords("Company_Members","Applications1",application_id);
+company_member_list = List();
+company_member_list_2 = List();
+shareholderlist = List();
+account_name = ifnull(app_Details.get("Account_Name").get("name"),"");
+account_id = ifnull(app_Details.get("Account_Name").get("id"),"");
+account_details = zoho.crm.getRecordById("Accounts",account_id.toLong());
+contact_partner_only = ifnull(account_details.get("Contact_Partner_Only"),"");
+info "Contact Partner Only: " + contact_partner_only;
+new_license_app_type = ifnull(new_license_app_details.getjson("New_License_Application_Type")," ");
+// branch_company_name = ifnull(new_license_app_details.getjson("Branch_Company_Name")," ");
+// parent_company_country = ifnull(new_license_app_details.getjson("Parent_Company_Country")," ");
+// parent_company_address = ifnull(new_license_app_details.getjson("Parent_Company_Address")," ");
+option1_english = ifnull(new_license_app_details.getjson("First_Suggested_Name_English"),"");
+option1_arabic = ifnull(new_license_app_details.getjson("First_Suggested_Name_Arabic"),"");
+option2_english = ifnull(new_license_app_details.getjson("Second_Suggested_Name_English"),"");
+option2_arabic = ifnull(new_license_app_details.getjson("Second_Suggested_Name_Arabic"),"");
+option3_english = ifnull(new_license_app_details.getjson("Third_Suggested_Name_English"),"");
+option3_arabic = ifnull(new_license_app_details.getjson("Third_Suggested_Name_Arabic"),"");
+franchise = ifnull(new_license_app_details.getjson("Franchise")," ");
+trade_name_of_franchise = ifnull(new_license_app_details.getjson("Trade_Name_of_Franchise")," ");
+license_act_type = ifnull(new_license_app_details.getjson("License_Activity_Type")," ");
+license_package = ifnull(new_license_app_details.getjson("License_Package")," ");
+will_apply_as_ec = ifnull(new_license_app_details.getjson("Will_apply_EC_as_well")," ");
+first_business_activity = ifnull(new_license_app_details.getjson("first_Business_Activity")," ");
+first_business_activity_name = ifnull(new_license_app_details.getjson("first_Business_Activity_Name")," ");
+second_business_activity = ifnull(new_license_app_details.getjson("second_Business_Activity")," ");
+second_business_activity_name = ifnull(new_license_app_details.getjson("second_Business_Activity_Name")," ");
+third_business_activity = ifnull(new_license_app_details.getjson("third_Business_Activity")," ");
+third_business_activity_name = ifnull(new_license_app_details.getjson("third_Business_Activity_Name")," ");
+forth_business_activity = ifnull(new_license_app_details.getjson("forth_Business_Activity")," ");
+forth_business_activity_name = ifnull(new_license_app_details.getjson("forth_Business_Activity_Name")," ");
+fifth_business_activity = ifnull(new_license_app_details.getjson("fifth_Business_Activity")," ");
+fifth_business_activity_name = ifnull(new_license_app_details.getjson("fifth_Business_Activity_Name")," ");
+sixth_business_activity = ifnull(new_license_app_details.getjson("sixth_Business_Activity")," ");
+sixth_business_activity_name = ifnull(new_license_app_details.getjson("sixth_Business_Activity_Name")," ");
+seventh_business_activity = ifnull(new_license_app_details.getjson("seventh_Business_Activity")," ");
+seventh_business_activity_name = ifnull(new_license_app_details.getjson("seventh_Business_Activity_Name")," ");
+type_of_business = ifnull(new_license_app_details.getjson("Type_of_Business")," ");
+shareholding_type = ifnull(new_license_app_details.getjson("Shareholding_Type")," ");
+total_share_capital = ifnull(new_license_app_details.getjson("Total_Share_Capital")," ");
+number_of_share = ifnull(new_license_app_details.getjson("Number_of_Shares")," ");
+share_value = ifnull(new_license_app_details.getjson("Share_Value")," ");
+company_member_gm = ifnull(new_license_app_details.getjson("Company_Member_GM")," ");
+ubo_type = ifnull(new_license_app_details.getjson("UBO_Type"),"");
+embed_1 = ifnull(new_license_app_details.getjson("Embed_1")," ");
+//Start Terms and Conditions
+sign_fields = zoho.sign.getFieldIds();
+for each  sign_field in sign_fields.getjson("field_types")
+{
+	if(sign_field.getjson("field_type_name").containsIgnoreCase("Signature"))
+	{
+		sign_field_type_id = sign_field.getjson("field_type_id");
+		sign_field_category = sign_field.getjson("field_category");
+		sign_field_type_name = sign_field.getjson("field_type_name");
+	}
+}
+t_and_c_files = ifnull(app_Details.getjson("Terms_and_Conditions")," ");
+ifza_t_and_c = 0;
+tlz_t_and_c = 0;
+ifza_office_pricing = 0;
+ifza_property_pricelist = 0;
+for each  t_and_c_file in t_and_c_files
+{
+	doc_name = t_and_c_file.getjson("file_Name");
+	if(doc_name.containsIgnoreCase("IFZA") && (doc_name.containsIgnoreCase("terms") || doc_name.containsIgnoreCase("T-C") || doc_name.containsIgnoreCase("T&C")))
+	{
+		ifza_t_and_c = 1;
+		info ifza_t_and_c;
+	}
+	if((doc_name.containsIgnoreCase("Trade License Zone") || doc_name.containsIgnoreCase("TLZ")) && (doc_name.containsIgnoreCase("terms") || doc_name.containsIgnoreCase("T-C") || doc_name.containsIgnoreCase("T&C")))
+	{
+		tlz_t_and_c = 1;
+		info tlz_t_and_c;
+	}
+	if((doc_name.containsIgnoreCase("IFZA") || doc_name.containsIgnoreCase("ifza")) && (doc_name.containsIgnoreCase("Office Pricing") || doc_name.containsIgnoreCase("Visa Licenses") || doc_name.containsIgnoreCase("plus")))
+	{
+		ifza_office_pricing = 1;
+		info ifza_office_pricing;
+	}
+	if((doc_name.containsIgnoreCase("IFZA") || doc_name.containsIgnoreCase("ifza")) && (doc_name.containsIgnoreCase("Property Price List") || doc_name.containsIgnoreCase("Property") || doc_name.containsIgnoreCase("Price List")))
+	{
+		ifza_property_pricelist = 1;
+		info ifza_property_pricelist;
+	}
+}
+//End of Terms and Conditions
+info "Company Member GM: " + company_member_gm;
+iterator_counter = 0;
+passport_empty_iterator = 0;
+passport_file_status = true;
+general_manager_counter = 0;
+cm_valid_counter = 0;
+for each  license_app in license_app_details
+{
+	roles = license_app.get("Roles_s");
+	if(roles == "UBO")
+	{
+		mp_ubo = Map();
+		mp_ubo = license_app.get("Full_Name");
+		shareholderlist.add(mp_ubo);
+	}
+	if(roles.notContains("General Manager/Representative") && roles.notContains("Secretary") && roles.notContains("Director") && roles.notContains("Shareholder"))
+	{
+		// 		mp_ubo = Map();
+		// 		mp_ubo = license_app.get("Full_Name");
+		// 		shareholderlist.add(mp_ubo);
+	}
+	else
+	{
+		//Company Members Validator
+		vm_validator = ifnull(license_app.get("CM_Valid"),"");
+		if(vm_validator == true)
+		{
+			cm_valid_counter = cm_valid_counter + 1;
+		}
+		//Validate the passport files if it's empty
+		passport_file = ifnull(license_app.get("Passport_file"),"");
+		if(passport_file == "" || passport_file == null)
+		{
+			passport_file_status = false;
+			passport_empty_iterator = passport_empty_iterator + 1;
+		}
+		else
+		{
+			iterator_counter = iterator_counter + 1;
+			info "iterator Counter: " + iterator_counter;
+			full_name = ifnull(license_app.get("Full_Name"),"");
+			company_email = ifnull(license_app.get("Email"),"");
+			company_fname = ifnull(license_app.get("First_Name")," ");
+			company_lname = ifnull(license_app.get("Last_Name")," ");
+			company_passport_number = ifnull(license_app.get("Passport_Number")," ");
+			gender = ifnull(license_app.get("Gender")," ");
+			ppi = ifnull(license_app.get("Passport_Place_of_Issue")," ");
+			ppcoi = ifnull(license_app.get("Passport_Country_of_Issue")," ");
+			nation = ifnull(license_app.get("Nationality")," ");
+			middle_name = ifnull(license_app.get("Middle_Name")," ");
+			salutation = ifnull(license_app.get("Title")," ");
+			roles = ifnull(license_app.get("Roles_s")," ");
+			mobile = ifnull(license_app.get("Mobile")," ");
+			gm_name = ifnull(license_app.get("GM")," ");
+			address_line_1 = ifnull(license_app.get("Address_Line_1")," ");
+			address_line_2 = ifnull(license_app.get("Address_Line_2")," ");
+			po_box = ifnull(license_app.get("PO_Box")," ");
+			postal_code = ifnull(license_app.get("Postal_Code")," ");
+			city = ifnull(license_app.get("City")," ");
+			state_province = ifnull(license_app.get("State_Province")," ");
+			country = ifnull(license_app.get("Country")," ");
+			fathers_first_name = ifnull(license_app.get("Father_s_First_Name")," ");
+			fathers_last_name = ifnull(license_app.get("Father_s_Last_Name")," ");
+			fathers_middle_name = ifnull(license_app.get("Father_s_Middle_Name")," ");
+			provide_uid_number = ifnull(license_app.get("Provide_UID_Number")," ");
+			emirates_id_number = ifnull(license_app.get("Emirates_ID_Number")," ");
+			file_number = ifnull(license_app.get("File_Number")," ");
+			country_of_birth = ifnull(license_app.get("Country_of_Birth")," ");
+			company_member_name = ifnull(license_app.get("Name")," ");
+			uae_resident = ifnull(license_app.get("UAE_Resident")," ");
+			nos = ifnull(license_app.get("Number_of_Shares")," ");
+			if(license_app.get("Passport_Issued_Date") != null)
+			{
+				ppid = ifnull(license_app.get("Passport_Issued_Date").tostring("MMM dd, yyyy")," ");
+			}
+			else
+			{
+				ppid = ifnull(license_app.get("Passport_Issued_Date")," ");
+			}
+			if(license_app.get("Date_of_Birth") != null)
+			{
+				pdob = ifnull(license_app.get("Date_of_Birth").tostring("MMM dd, yyyy")," ");
+			}
+			else
+			{
+				pped = ifnull(license_app.get("Date_of_Birth")," ");
+			}
+			if(license_app.get("Passport_Expiry_Date") != null)
+			{
+				pped = ifnull(license_app.get("Passport_Expiry_Date").tostring("MMM dd, yyyy")," ");
+			}
+			else
+			{
+				pped = ifnull(license_app.get("Passport_Expiry_Date")," ");
+			}
+			//Get the GM value
+			if(license_app.get("Roles_s").containsIgnoreCase("General Manager/Representative"))
+			{
+				gm_email = ifnull(license_app.get("Email"),"");
+				gm_fname = ifnull(license_app.get("First_Name"),"");
+				gm_lname = ifnull(license_app.get("Last_Name"),"");
+				info "GM Email: " + gm_email;
+			}
+			passport_image = license_app.getJson("Image_1");
+			passport_file = ifnull(license_app.getJson("Passport_file"),"");
+			passport_url = ifnull(license_app.getJson("Passport_Image_URL"),"");
+			InsideParam1 = Map();
+			InsideParam1.put("Email",company_email);
+			InsideParam1.put("First_Name",company_fname);
+			InsideParam1.put("Last_Name",company_lname);
+			InsideParam1.put("GM",gm_name);
+			InsideParam1.put("Passport_Number",company_passport_number);
+			InsideParam1.put("Gender",gender);
+			InsideParam1.put("Passport_Place_of_Issue",ppi);
+			InsideParam1.put("Passport_Country_of_Issue",ppcoi);
+			InsideParam1.put("Nationality",nation);
+			InsideParam1.put("Middle_Name",middle_name);
+			InsideParam1.put("Title",salutation);
+			InsideParam1.put("Passport_Issued_Date",ppid);
+			InsideParam1.put("Date_of_Birth",pdob);
+			InsideParam1.put("Roles_s",roles);
+			InsideParam1.put("Mobile",mobile);
+			InsideParam1.put("Address_Line_1",address_line_1);
+			InsideParam1.put("Address_Line_2",address_line_2);
+			InsideParam1.put("PO_Box",po_box);
+			InsideParam1.put("Postal_Code",postal_code);
+			InsideParam1.put("City",city);
+			InsideParam1.put("State_Province",state_province);
+			InsideParam1.put("Country",country);
+			InsideParam1.put("Father_s_First_Name",fathers_first_name);
+			InsideParam1.put("Father_s_Last_Name",fathers_last_name);
+			InsideParam1.put("Father_s_Middle_Name",fathers_middle_name);
+			InsideParam1.put("Provide_UID_Number",provide_uid_number);
+			InsideParam1.put("Emirates_ID_Number",emirates_id_number);
+			InsideParam1.put("File_Number",file_number);
+			InsideParam1.put("Passport_Expiry_Date",pped);
+			InsideParam1.put("Country_of_Birth",country_of_birth);
+			InsideParam1.put("Passport_file",passport_file);
+			InsideParam1.put("Image_1",passport_image);
+			InsideParam1.put("Passport_Image_URL",passport_url);
+			InsideParam1.put("Name",company_member_name);
+			InsideParam1.put("UAE_Resident",uae_resident);
+			InsideParam1.put("Number_of_Shares",nos);
+			InsideParam1.put("Full_Name",full_name);
+			company_member_list_2.add(InsideParam1);
+		}
+		//validate the roles if it's multiple or no GM
+		gm_role = ifnull(license_app.get("Roles_s"),"");
+		info "GM ROLE: " + gm_role;
+		if(gm_role.containsIgnoreCase("General Manager"))
+		{
+			general_manager_counter = general_manager_counter + 1;
+		}
+		//get the Shareholders
+		// 		if(gm_role.containsIgnoreCase("UBO"))
+		// 		{
+		// 			mp = license_app.get("Full_Name");
+		// 			shareholderlist.add(mp);
+		// 		}
+	}
+}
+info "Shareholder List Size: " + shareholderlist.size();
+if(shareholderlist.size() > 0)
+{
+	shareholder1 = ifnull(shareholderlist.get(0),"");
+	info "Shareholder 1: " + shareholder1;
+}
+if(shareholderlist.size() > 1)
+{
+	shareholder2 = ifnull(shareholderlist.get(1),"");
+	info "Shareholder 2: " + shareholder2;
+}
+if(shareholderlist.size() > 2)
+{
+	shareholder3 = ifnull(shareholderlist.get(2),"");
+	info "Shareholder 3: " + shareholder3;
+}
+if(shareholderlist.size() > 3)
+{
+	shareholder4 = ifnull(shareholderlist.get(3),"");
+	info "Shareholder 4: " + shareholder4;
+}
+if(shareholderlist.size() > 4)
+{
+	shareholder5 = ifnull(shareholderlist.get(4),"");
+	info "Shareholder 5: " + shareholder5;
+}
+if(shareholderlist.size() > 5)
+{
+	shareholder6 = ifnull(shareholderlist.get(5),"");
+	info "Shareholder 6: " + shareholder6;
+}
+if(shareholderlist.size() > 6)
+{
+	shareholder7 = ifnull(shareholderlist.get(6),"");
+	info "Shareholder 7: " + shareholder7;
+}
+info "Length: " + iterator_counter;
+if(iterator_counter > 0 || iterator_counter == 1)
+{
+	country_of_birth_1 = ifnull(company_member_list_2.get(0).get("Country_of_Birth"),"");
+	passport_expiry_date_1 = ifnull(company_member_list_2.get(0).get("Passport_Expiry_Date"),"");
+	mobile_1 = ifnull(company_member_list_2.get(0).get("Mobile"),"");
+	email_1 = ifnull(company_member_list_2.get(0).get("Email"),"");
+	first_name_1 = ifnull(company_member_list_2.get(0).get("First_Name"),"");
+	info "First Name 1: " + first_name_1;
+	last_name_1 = ifnull(company_member_list_2.get(0).get("Last_Name"),"");
+	info "Last Name 1: " + last_name_1;
+	gen_man_1 = ifnull(company_member_list_2.get(0).get("GM"),"");
+	passport_number_1 = ifnull(company_member_list_2.get(0).get("Passport_Number"),"");
+	gender_1 = ifnull(company_member_list_2.get(0).get("Gender"),"");
+	passport_place_of_issue_1 = ifnull(company_member_list_2.get(0).get("Passport_Place_of_Issue"),"");
+	passport_country_of_issue_1 = ifnull(company_member_list_2.get(0).get("Passport_Country_of_Issue"),"");
+	nationality_1 = ifnull(company_member_list_2.get(0).get("Nationality"),"");
+	middle_name_1 = ifnull(company_member_list_2.get(0).get("Middle_Name"),"");
+	title_1 = ifnull(company_member_list_2.get(0).get("Title"),"");
+	passport_issued_date_1 = ifnull(company_member_list_2.get(0).get("Passport_Issued_Date"),"");
+	info "Passport Issued Date 1: " + passport_issued_date_1;
+	date_of_birth_1 = ifnull(company_member_list_2.get(0).get("Date_of_Birth"),"");
+	roles_1 = ifnull(company_member_list_2.get(0).get("Roles_s"),"");
+	first_address_line_1 = ifnull(company_member_list_2.get(0).get("Address_Line_1"),"");
+	first_address_line_2 = ifnull(company_member_list_2.get(0).get("Address_Line_2"),"");
+	first_po_box = ifnull(company_member_list_2.get(0).get("PO_Box"),"");
+	first_postal_code = ifnull(company_member_list_2.get(0).get("Postal_Code"),"");
+	first_city = ifnull(company_member_list_2.get(0).get("City"),"");
+	first_state_province = ifnull(company_member_list_2.get(0).get("State_Province"),"");
+	first_country = ifnull(company_member_list_2.get(0).get("Country"),"");
+	first_fathers_first_name = ifnull(company_member_list_2.get(0).get("Father_s_First_Name"),"");
+	first_fathers_middle_name = ifnull(company_member_list_2.get(0).get("Father_s_Middle_Name"),"");
+	first_fathers_last_name = ifnull(company_member_list_2.get(0).get("Father_s_Last_Name"),"");
+	first_fathers_last_name = ifnull(company_member_list_2.get(0).get("Father_s_Last_Name"),"");
+	provide_uid_number_1 = ifnull(company_member_list_2.get(0).get("Provide_UID_Number"),"");
+	emirates_id_number_1 = ifnull(company_member_list_2.get(0).get("Emirates_ID_Number"),"");
+	file_number_1 = ifnull(company_member_list_2.get(0).get("File_Number"),"");
+	passport_file_1 = ifnull(company_member_list_2.get(0).get("Passport_file"),"");
+	passport_image_1 = ifnull(company_member_list_2.get(0).get("Image_1"),"");
+	passport_url_1 = ifnull(company_member_list_2.get(0).get("Passport_Image_URL"),"");
+	passport_url_1 = ifnull(company_member_list_2.get(0).get("Passport_Image_URL"),"");
+	company_member_name_1 = ifnull(company_member_list_2.get(0).get("Full_Name"),"");
+	info "Company Member Name 1: " + company_member_name_1;
+	uae_resident_1 = ifnull(company_member_list_2.get(0).get("UAE_Resident"),"");
+	nos1 = ifnull(company_member_list_2.get(0).get("Number_of_Shares"),"");
+}
+if(iterator_counter > 1 || iterator_counter == 2)
+{
+	country_of_birth_2 = ifnull(company_member_list_2.get(1).get("Country_of_Birth"),"");
+	info "Country of Birth" + country_of_birth_2;
+	passport_expiry_date_2 = ifnull(company_member_list_2.get(1).get("Passport_Expiry_Date"),"");
+	mobile_2 = ifnull(company_member_list_2.get(1).get("Mobile"),"");
+	gen_man_2 = ifnull(company_member_list_2.get(1).get("GM"),"");
+	email_2 = ifnull(company_member_list_2.get(1).get("Email"),"");
+	first_name_2 = ifnull(company_member_list_2.get(1).get("First_Name"),"");
+	last_name_2 = ifnull(company_member_list_2.get(1).get("Last_Name"),"");
+	passport_number_2 = ifnull(company_member_list_2.get(1).get("Passport_Number"),"");
+	gender_2 = ifnull(company_member_list_2.get(1).get("Gender"),"");
+	passport_place_of_issue_2 = ifnull(company_member_list_2.get(1).get("Passport_Place_of_Issue"),"");
+	passport_country_of_issue_2 = ifnull(company_member_list_2.get(1).get("Passport_Country_of_Issue"),"");
+	nationality_2 = ifnull(company_member_list_2.get(1).get("Nationality"),"");
+	middle_name_2 = ifnull(company_member_list_2.get(1).get("Middle_Name"),"");
+	title_2 = ifnull(company_member_list_2.get(1).get("Title"),"");
+	passport_issued_date_2 = ifnull(company_member_list_2.get(1).get("Passport_Issued_Date"),"");
+	date_of_birth_2 = ifnull(company_member_list_2.get(1).get("Date_of_Birth"),"");
+	roles_2 = ifnull(company_member_list_2.get(1).get("Roles_s"),"");
+	second_address_line_1 = ifnull(company_member_list_2.get(1).get("Address_Line_1"),"");
+	second_address_line_2 = ifnull(company_member_list_2.get(1).get("Address_Line_2"),"");
+	second_po_box = ifnull(company_member_list_2.get(1).get("PO_Box"),"");
+	second_postal_code = ifnull(company_member_list_2.get(1).get("Postal_Code"),"");
+	second_city = ifnull(company_member_list_2.get(1).get("City"),"");
+	second_state_province = ifnull(company_member_list_2.get(1).get("State_Province"),"");
+	second_country = ifnull(company_member_list_2.get(1).get("Country"),"");
+	second_fathers_first_name = ifnull(company_member_list_2.get(1).get("Father_s_First_Name"),"");
+	second_fathers_middle_name = ifnull(company_member_list_2.get(1).get("Father_s_Middle_Name"),"");
+	second_fathers_last_name = ifnull(company_member_list_2.get(1).get("Father_s_Last_Name"),"");
+	provide_uid_number_2 = ifnull(company_member_list_2.get(1).get("Provide_UID_Number"),"");
+	emirates_id_number_2 = ifnull(company_member_list_2.get(1).get("Emirates_ID_Number"),"");
+	provide_uid_number_2 = ifnull(company_member_list_2.get(1).get("Provide_UID_Number"),"");
+	emirates_id_number_2 = ifnull(company_member_list_2.get(1).get("Emirates_ID_Number"),"");
+	file_number_2 = ifnull(company_member_list_2.get(1).get("File_Number"),"");
+	passport_file_2 = ifnull(company_member_list_2.get(1).get("Passport_file"),"");
+	passport_image_2 = ifnull(company_member_list_2.get(1).get("Image_1"),"");
+	passport_url_2 = ifnull(company_member_list_2.get(1).get("Passport_Image_URL"),"");
+	company_member_name_2 = ifnull(company_member_list_2.get(1).get("Full_Name"),"");
+	info "Company Member Name 2: " + company_member_name_2;
+	uae_resident_2 = ifnull(company_member_list_2.get(1).get("UAE_Resident"),"");
+	nos2 = ifnull(company_member_list_2.get(1).get("Number_of_Shares"),"");
+}
+if(iterator_counter > 2 || iterator_counter == 3)
+{
+	country_of_birth_3 = ifnull(company_member_list_2.get(2).get("Country_of_Birth"),"");
+	passport_expiry_date_3 = ifnull(company_member_list_2.get(2).get("Passport_Expiry_Date"),"");
+	mobile_3 = ifnull(company_member_list_2.get(2).get("Mobile"),"");
+	gen_man_3 = ifnull(company_member_list_2.get(2).get("GM"),"");
+	email_3 = ifnull(company_member_list_2.get(2).get("Email"),"");
+	first_name_3 = ifnull(company_member_list_2.get(2).get("First_Name"),"");
+	last_name_3 = ifnull(company_member_list_2.get(2).get("Last_Name"),"");
+	passport_number_3 = ifnull(company_member_list_2.get(2).get("Passport_Number"),"");
+	gender_3 = ifnull(company_member_list_2.get(2).get("Gender"),"");
+	passport_place_of_issue_3 = ifnull(company_member_list_2.get(2).get("Passport_Place_of_Issue"),"");
+	passport_country_of_issue_3 = ifnull(company_member_list_2.get(2).get("Passport_Country_of_Issue"),"");
+	nationality_3 = ifnull(company_member_list_2.get(2).get("Nationality"),"");
+	middle_name_3 = ifnull(company_member_list_2.get(2).get("Middle_Name"),"");
+	title_3 = ifnull(company_member_list_2.get(2).get("Title"),"");
+	passport_issued_date_3 = ifnull(company_member_list_2.get(2).get("Passport_Issued_Date"),"");
+	date_of_birth_3 = ifnull(company_member_list_2.get(2).get("Date_of_Birth"),"");
+	roles_3 = ifnull(company_member_list_2.get(2).get("Roles_s"),"");
+	third_address_line_1 = ifnull(company_member_list_2.get(2).get("Address_Line_1"),"");
+	third_address_line_2 = ifnull(company_member_list_2.get(2).get("Address_Line_2"),"");
+	third_po_box = ifnull(company_member_list_2.get(2).get("PO_Box"),"");
+	third_postal_code = ifnull(company_member_list_2.get(2).get("Postal_Code"),"");
+	third_city = ifnull(company_member_list_2.get(2).get("City"),"");
+	third_state_province = ifnull(company_member_list_2.get(2).get("State_Province"),"");
+	third_country = ifnull(company_member_list_2.get(2).get("Country"),"");
+	third_fathers_first_name = ifnull(company_member_list_2.get(2).get("Father_s_First_Name"),"");
+	third_fathers_middle_name = ifnull(company_member_list_2.get(2).get("Father_s_Middle_Name"),"");
+	third_fathers_last_name = ifnull(company_member_list_2.get(2).get("Father_s_Last_Name"),"");
+	provide_uid_number_3 = ifnull(company_member_list_2.get(2).get("Provide_UID_Number"),"");
+	emirates_id_number_3 = ifnull(company_member_list_2.get(2).get("Emirates_ID_Number"),"");
+	file_number_3 = ifnull(company_member_list_2.get(2).get("File_Number"),"");
+	passport_file_3 = ifnull(company_member_list_2.get(2).get("Passport_file"),"");
+	passport_image_3 = ifnull(company_member_list_2.get(2).get("Image_1"),"");
+	passport_url_3 = ifnull(company_member_list_2.get(2).get("Passport_Image_URL"),"");
+	company_member_name_3 = ifnull(company_member_list_2.get(2).get("Full_Name"),"");
+	info "Company Member Name 3: " + company_member_name_3;
+	uae_resident_3 = ifnull(company_member_list_2.get(2).get("UAE_Resident"),"");
+	nos3 = ifnull(company_member_list_2.get(2).get("Number_of_Shares"),"");
+}
+if(iterator_counter > 3 || iterator_counter == 4)
+{
+	country_of_birth_4 = ifnull(company_member_list_2.get(3).get("Country_of_Birth"),"");
+	passport_expiry_date_4 = ifnull(company_member_list_2.get(3).get("Passport_Expiry_Date"),"");
+	mobile_4 = ifnull(company_member_list_2.get(3).get("Mobile"),"");
+	gen_man_4 = ifnull(company_member_list_2.get(3).get("GM"),"");
+	email_4 = ifnull(company_member_list_2.get(3).get("Email"),"");
+	first_name_4 = ifnull(company_member_list_2.get(3).get("First_Name"),"");
+	last_name_4 = ifnull(company_member_list_2.get(3).get("Last_Name"),"");
+	passport_number_4 = ifnull(company_member_list_2.get(3).get("Passport_Number"),"");
+	gender_4 = ifnull(company_member_list_2.get(3).get("Gender"),"");
+	passport_place_of_issue_4 = ifnull(company_member_list_2.get(3).get("Passport_Place_of_Issue"),"");
+	passport_country_of_issue_4 = ifnull(company_member_list_2.get(3).get("Passport_Country_of_Issue"),"");
+	nationality_4 = ifnull(company_member_list_2.get(3).get("Nationality"),"");
+	middle_name_4 = ifnull(company_member_list_2.get(3).get("Middle_Name"),"");
+	title_4 = ifnull(company_member_list_2.get(3).get("Title"),"");
+	passport_issued_date_4 = ifnull(company_member_list_2.get(3).get("Passport_Issued_Date"),"");
+	date_of_birth_4 = ifnull(company_member_list_2.get(3).get("Date_of_Birth"),"");
+	roles_4 = ifnull(company_member_list_2.get(3).get("Roles_s"),"");
+	forth_address_line_1 = ifnull(company_member_list_2.get(3).get("Address_Line_1"),"");
+	forth_address_line_2 = ifnull(company_member_list_2.get(3).get("Address_Line_2"),"");
+	forth_po_box = ifnull(company_member_list_2.get(3).get("PO_Box"),"");
+	forth_postal_code = ifnull(company_member_list_2.get(3).get("Postal_Code"),"");
+	forth_city = ifnull(company_member_list_2.get(3).get("City"),"");
+	forth_state_province = ifnull(company_member_list_2.get(3).get("State_Province"),"");
+	forth_country = ifnull(company_member_list_2.get(3).get("Country"),"");
+	forth_fathers_first_name = ifnull(company_member_list_2.get(3).get("Father_s_First_Name"),"");
+	forth_fathers_middle_name = ifnull(company_member_list_2.get(3).get("Father_s_Middle_Name"),"");
+	forth_fathers_last_name = ifnull(company_member_list_2.get(3).get("Father_s_Last_Name"),"");
+	provide_uid_number_4 = ifnull(company_member_list_2.get(3).get("Provide_UID_Number"),"");
+	emirates_id_number_4 = ifnull(company_member_list_2.get(3).get("Emirates_ID_Number"),"");
+	file_number_4 = ifnull(company_member_list_2.get(3).get("File_Number"),"");
+	passport_file_4 = ifnull(company_member_list_2.get(3).get("Passport_file"),"");
+	passport_image_4 = ifnull(company_member_list_2.get(3).get("Image_1"),"");
+	passport_url_4 = ifnull(company_member_list_2.get(3).get("Passport_Image_URL"),"");
+	company_member_name_4 = ifnull(company_member_list_2.get(3).get("Full_Name"),"");
+	info "Company Member Name 4: " + company_member_name_4;
+	uae_resident_4 = ifnull(company_member_list_2.get(3).get("UAE_Resident"),"");
+	nos4 = ifnull(company_member_list_2.get(3).get("Number_of_Shares"),"");
+}
+if(iterator_counter > 4 || iterator_counter == 5)
+{
+	country_of_birth_5 = ifnull(company_member_list_2.get(4).get("Country_of_Birth"),"");
+	passport_expiry_date_5 = ifnull(company_member_list_2.get(4).get("Passport_Expiry_Date"),"");
+	mobile_5 = ifnull(company_member_list_2.get(4).get("Mobile"),"");
+	gen_man_5 = ifnull(company_member_list_2.get(4).get("GM"),"");
+	email_5 = ifnull(company_member_list_2.get(4).get("Email"),"");
+	first_name_5 = ifnull(company_member_list_2.get(4).get("First_Name"),"");
+	last_name_5 = ifnull(company_member_list_2.get(4).get("Last_Name"),"");
+	passport_number_5 = ifnull(company_member_list_2.get(4).get("Passport_Number"),"");
+	gender_5 = ifnull(company_member_list_2.get(4).get("Gender"),"");
+	passport_place_of_issue_5 = ifnull(company_member_list_2.get(4).get("Passport_Place_of_Issue"),"");
+	passport_country_of_issue_5 = ifnull(company_member_list_2.get(4).get("Passport_Country_of_Issue"),"");
+	nationality_5 = ifnull(company_member_list_2.get(4).get("Nationality"),"");
+	middle_name_5 = ifnull(company_member_list_2.get(4).get("Middle_Name"),"");
+	title_5 = ifnull(company_member_list_2.get(4).get("Title"),"");
+	passport_issued_date_5 = ifnull(company_member_list_2.get(4).get("Passport_Issued_Date"),"");
+	date_of_birth_5 = ifnull(company_member_list_2.get(4).get("Date_of_Birth"),"");
+	roles_5 = ifnull(company_member_list_2.get(4).get("Roles_s"),"");
+	fifth_address_line_1 = ifnull(company_member_list_2.get(4).get("Address_Line_1"),"");
+	fifth_address_line_2 = ifnull(company_member_list_2.get(4).get("Address_Line_2"),"");
+	fifth_po_box = ifnull(company_member_list_2.get(4).get("PO_Box"),"");
+	fifth_postal_code = ifnull(company_member_list_2.get(4).get("Postal_Code"),"");
+	fifth_city = ifnull(company_member_list_2.get(4).get("City"),"");
+	fifth_state_province = ifnull(company_member_list_2.get(4).get("State_Province"),"");
+	fifth_country = ifnull(company_member_list_2.get(4).get("Country"),"");
+	fifth_fathers_first_name = ifnull(company_member_list_2.get(4).get("Father_s_First_Name"),"");
+	fifth_fathers_middle_name = ifnull(company_member_list_2.get(4).get("Father_s_Middle_Name"),"");
+	fifth_fathers_last_name = ifnull(company_member_list_2.get(4).get("Father_s_Last_Name"),"");
+	provide_uid_number_5 = ifnull(company_member_list_2.get(4).get("Provide_UID_Number"),"");
+	emirates_id_number_5 = ifnull(company_member_list_2.get(4).get("Emirates_ID_Number"),"");
+	file_number_5 = ifnull(company_member_list_2.get(4).get("File_Number"),"");
+	passport_file_5 = ifnull(company_member_list_2.get(4).get("Passport_file"),"");
+	passport_image_5 = ifnull(company_member_list_2.get(4).get("Image_1"),"");
+	passport_url_5 = ifnull(company_member_list_2.get(4).get("Passport_Image_URL"),"");
+	company_member_name_5 = ifnull(company_member_list_2.get(4).get("Full_Name"),"");
+	uae_resident_5 = ifnull(company_member_list_2.get(4).get("UAE_Resident"),"");
+	nos5 = ifnull(company_member_list_2.get(4).get("Number_of_Shares"),"");
+}
+if(iterator_counter > 5 || iterator_counter == 6)
+{
+	country_of_birth_6 = ifnull(company_member_list_2.get(5).get("Country_of_Birth"),"");
+	passport_expiry_date_6 = ifnull(company_member_list_2.get(5).get("Passport_Expiry_Date"),"");
+	mobile_6 = ifnull(company_member_list_2.get(5).get("Mobile"),"");
+	gen_man_6 = ifnull(company_member_list_2.get(5).get("GM"),"");
+	email_6 = ifnull(company_member_list_2.get(5).get("Email"),"");
+	first_name_6 = ifnull(company_member_list_2.get(5).get("First_Name"),"");
+	last_name_6 = ifnull(company_member_list_2.get(5).get("Last_Name"),"");
+	passport_number_6 = ifnull(company_member_list_2.get(5).get("Passport_Number"),"");
+	gender_6 = ifnull(company_member_list_2.get(5).get("Gender"),"");
+	passport_place_of_issue_6 = ifnull(company_member_list_2.get(5).get("Passport_Place_of_Issue"),"");
+	passport_country_of_issue_6 = ifnull(company_member_list_2.get(5).get("Passport_Country_of_Issue"),"");
+	nationality_6 = ifnull(company_member_list_2.get(5).get("Nationality"),"");
+	middle_name_6 = ifnull(company_member_list_2.get(5).get("Middle_Name"),"");
+	title_6 = ifnull(company_member_list_2.get(5).get("Title"),"");
+	passport_issued_date_6 = ifnull(company_member_list_2.get(5).get("Passport_Issued_Date"),"");
+	date_of_birth_6 = ifnull(company_member_list_2.get(5).get("Date_of_Birth"),"");
+	roles_6 = ifnull(company_member_list_2.get(5).get("Roles_s"),"");
+	sixth_address_line_1 = ifnull(company_member_list_2.get(5).get("Address_Line_1"),"");
+	sixth_address_line_2 = ifnull(company_member_list_2.get(5).get("Address_Line_2"),"");
+	sixth_po_box = ifnull(company_member_list_2.get(5).get("PO_Box"),"");
+	sixth_postal_code = ifnull(company_member_list_2.get(5).get("Postal_Code"),"");
+	sixth_city = ifnull(company_member_list_2.get(5).get("City"),"");
+	sixth_state_province = ifnull(company_member_list_2.get(5).get("State_Province"),"");
+	sixth_country = ifnull(company_member_list_2.get(5).get("Country"),"");
+	sixth_fathers_first_name = ifnull(company_member_list_2.get(5).get("Father_s_First_Name"),"");
+	sixth_fathers_middle_name = ifnull(company_member_list_2.get(5).get("Father_s_Middle_Name"),"");
+	sixth_fathers_last_name = ifnull(company_member_list_2.get(5).get("Father_s_Last_Name"),"");
+	provide_uid_number_6 = ifnull(company_member_list_2.get(5).get("Provide_UID_Number"),"");
+	emirates_id_number_6 = ifnull(company_member_list_2.get(5).get("Emirates_ID_Number"),"");
+	file_number_6 = ifnull(company_member_list_2.get(5).get("File_Number"),"");
+	passport_file_6 = ifnull(company_member_list_2.get(5).get("Passport_file"),"");
+	passport_image_6 = ifnull(company_member_list_2.get(5).get("Image_1"),"");
+	passport_url_6 = ifnull(company_member_list_2.get(5).get("Passport_Image_URL"),"");
+	company_member_name_6 = ifnull(company_member_list_2.get(5).get("Full_Name"),"");
+	uae_resident_6 = ifnull(company_member_list_2.get(5).get("UAE_Resident"),"");
+	nos6 = ifnull(company_member_list_2.get(5).get("Number_of_Shares"),"");
+}
+if(iterator_counter > 6 || iterator_counter == 7)
+{
+	country_of_birth_7 = ifnull(company_member_list_2.get(6).get("Country_of_Birth"),"");
+	passport_expiry_date_7 = ifnull(company_member_list_2.get(6).get("Passport_Expiry_Date"),"");
+	mobile_7 = ifnull(company_member_list_2.get(6).get("Mobile"),"");
+	gen_man_7 = ifnull(company_member_list_2.get(6).get("GM"),"");
+	email_7 = ifnull(company_member_list_2.get(6).get("Email"),"");
+	first_name_7 = ifnull(company_member_list_2.get(6).get("First_Name"),"");
+	last_name_7 = ifnull(company_member_list_2.get(6).get("Last_Name"),"");
+	passport_number_7 = ifnull(company_member_list_2.get(6).get("Passport_Number"),"");
+	gender_7 = ifnull(company_member_list_2.get(6).get("Gender"),"");
+	passport_place_of_issue_7 = ifnull(company_member_list_2.get(6).get("Passport_Place_of_Issue"),"");
+	passport_country_of_issue_7 = ifnull(company_member_list_2.get(6).get("Passport_Country_of_Issue"),"");
+	nationality_7 = ifnull(company_member_list_2.get(6).get("Nationality"),"");
+	middle_name_7 = ifnull(company_member_list_2.get(6).get("Middle_Name"),"");
+	title_7 = ifnull(company_member_list_2.get(6).get("Title"),"");
+	passport_issued_date_7 = ifnull(company_member_list_2.get(6).get("Passport_Issued_Date"),"");
+	date_of_birth_7 = ifnull(company_member_list_2.get(6).get("Date_of_Birth"),"");
+	roles_7 = ifnull(company_member_list_2.get(6).get("Roles_s"),"");
+	seven_address_line_1 = ifnull(company_member_list_2.get(6).get("Address_Line_1"),"");
+	seven_address_line_2 = ifnull(company_member_list_2.get(6).get("Address_Line_2"),"");
+	seven_po_box = ifnull(company_member_list_2.get(6).get("PO_Box"),"");
+	seven_postal_code = ifnull(company_member_list_2.get(6).get("Postal_Code"),"");
+	seven_city = ifnull(company_member_list_2.get(6).get("City"),"");
+	seven_state_province = ifnull(company_member_list_2.get(6).get("State_Province"),"");
+	seven_country = ifnull(company_member_list_2.get(6).get("Country"),"");
+	seven_fathers_first_name = ifnull(company_member_list_2.get(6).get("Father_s_First_Name"),"");
+	seven_fathers_middle_name = ifnull(company_member_list_2.get(6).get("Father_s_Middle_Name"),"");
+	seven_fathers_last_name = ifnull(company_member_list_2.get(6).get("Father_s_Last_Name"),"");
+	provide_uid_number_7 = ifnull(company_member_list_2.get(6).get("Provide_UID_Number"),"");
+	emirates_id_number_7 = ifnull(company_member_list_2.get(6).get("Emirates_ID_Number"),"");
+	file_number_7 = ifnull(company_member_list_2.get(6).get("File_Number"),"");
+	passport_file_7 = ifnull(company_member_list_2.get(6).get("Passport_file"),"");
+	passport_image_7 = ifnull(company_member_list_2.get(6).get("Image_1"),"");
+	passport_url_7 = ifnull(company_member_list_2.get(6).get("Passport_Image_URL"),"");
+	company_member_name_7 = ifnull(company_member_list_2.get(6).get("Full_Name"),"");
+	uae_resident_7 = ifnull(company_member_list_2.get(6).get("UAE_Resident"),"");
+	nos7 = ifnull(company_member_list_2.get(6).get("Number_of_Shares"),"");
+}
+if((passport_file_status != false || passport_file_status == true) && general_manager_counter == 1 && cm_valid_counter == iterator_counter && t_and_c_files != "" && ifza_t_and_c == 1 && tlz_t_and_c == 1 && ifza_office_pricing == 1 && ifza_property_pricelist == 1)
+{
+	info "Company Member GM: " + company_member_gm;
+	InsideParam2 = Map();
+	InsideParam2.put("general_manager",company_member_gm);
+	InsideParam2.put("New_License_Application_Type",new_license_app_type);
+	// InsideParam2.put("Branch_Company_Name",branch_company_name);
+	// InsideParam2.put("Parent_Company_Country",parent_company_country);
+	// InsideParam2.put("Parent_Company_Address",parent_company_address);
+	InsideParam2.put("First_Suggested_Name_English",option1_english);
+	InsideParam2.put("First_Suggested_Name_Arabic",option1_arabic);
+	InsideParam2.put("Second_Suggested_Name_English",option2_english);
+	InsideParam2.put("Second_Suggested_Name_Arabic",option2_arabic);
+	InsideParam2.put("Third_Suggested_Name_English",option3_english);
+	InsideParam2.put("Third_Suggested_Name_Arabic",option3_arabic);
+	InsideParam2.put("Franchise",franchise);
+	InsideParam2.put("Trade_Name_of_Franchise",trade_name_of_franchise);
+	InsideParam2.put("License_Activity_Type",license_act_type);
+	InsideParam2.put("License_Package",license_package);
+	InsideParam2.put("Will_apply_EC_as_well",will_apply_as_ec);
+	InsideParam2.put("first_Business_Activity",first_business_activity);
+	InsideParam2.put("first_business_activity_name",first_business_activity_name);
+	InsideParam2.put("second_business_activity",second_business_activity);
+	InsideParam2.put("second_Business_Activity_Name",second_business_activity_name);
+	InsideParam2.put("third_Business_Activity",third_business_activity);
+	InsideParam2.put("third_Business_Activity_Name",third_business_activity_name);
+	InsideParam2.put("forth_Business_Activity",forth_business_activity);
+	InsideParam2.put("forth_Business_Activity_Name",forth_business_activity_name);
+	InsideParam2.put("fifth_Business_Activity",fifth_business_activity);
+	InsideParam2.put("fifth_Business_Activity_Name",fifth_business_activity_name);
+	InsideParam2.put("sixth_Business_Activity",sixth_business_activity);
+	InsideParam2.put("sixth_Business_Activity_Name",sixth_business_activity_name);
+	InsideParam2.put("seventh_Business_Activity",seventh_business_activity);
+	InsideParam2.put("seventh_Business_Activity_Name",seventh_business_activity_name);
+	InsideParam2.put("Type_of_Business",type_of_business);
+	InsideParam2.put("Shareholding_Type",shareholding_type);
+	InsideParam2.put("Total_Share_Capital",total_share_capital);
+	InsideParam2.put("Number_of_Shares",number_of_share);
+	InsideParam2.put("Share_Value",share_value);
+	InsideParam2.put("iterator_counter",iterator_counter);
+	InsideParam2.put("passport_expiry_date_1",passport_expiry_date_1);
+	InsideParam2.put("country_of_birth_1",country_of_birth_1);
+	InsideParam2.put("email_1",email_1);
+	InsideParam2.put("mobile_1",mobile_1);
+	InsideParam2.put("first_name_1",first_name_1);
+	InsideParam2.put("last_name_1",last_name_1);
+	InsideParam2.put("passport_number_1",passport_number_1);
+	InsideParam2.put("gender_1",gender_1);
+	InsideParam2.put("place_of_issue_1",passport_place_of_issue_1);
+	InsideParam2.put("passport_country_of_issue_1",passport_country_of_issue_1);
+	InsideParam2.put("current_nationality_1",nationality_1);
+	InsideParam2.put("middle_name_1",middle_name_1);
+	InsideParam2.put("title_1",title_1);
+	InsideParam2.put("passport_issue_date_1",passport_issued_date_1);
+	InsideParam2.put("date_of_birth_1",date_of_birth_1);
+	InsideParam2.put("roles_1",roles_1);
+	InsideParam2.put("gen_man_1",gen_man_1);
+	InsideParam2.put("1_address_line_1",first_address_line_1);
+	InsideParam2.put("1_address_line_2",first_address_line_2);
+	InsideParam2.put("1_po_box",first_po_box);
+	InsideParam2.put("1_postal_code",first_postal_code);
+	InsideParam2.put("1_city",first_city);
+	InsideParam2.put("1_state_province",first_state_province);
+	InsideParam2.put("1_country",first_country);
+	InsideParam2.put("1_father_first_name",first_fathers_first_name);
+	InsideParam2.put("1_father_middle_name",first_fathers_middle_name);
+	InsideParam2.put("1_father_last_name",first_fathers_last_name);
+	InsideParam2.put("file_number_1",file_number_1);
+	InsideParam2.put("passport_file_1",passport_file_1);
+	InsideParam2.put("passport_image_1",passport_image_1);
+	InsideParam2.put("passport_url_1",passport_url_1);
+	InsideParam2.put("emirates_id_number_1",emirates_id_number_1);
+	InsideParam2.put("provide_uid_number_1",provide_uid_number_1);
+	InsideParam2.put("company_member_name_1",company_member_name_1);
+	InsideParam2.put("first_name_2",first_name_2);
+	InsideParam2.put("last_name_2",last_name_2);
+	InsideParam2.put("passport_expiry_date_2",passport_expiry_date_2);
+	InsideParam2.put("country_of_birth_2",country_of_birth_2);
+	InsideParam2.put("email_2",email_2);
+	InsideParam2.put("mobile_2",mobile_2);
+	InsideParam2.put("passport_number_2",passport_number_2);
+	InsideParam2.put("gender_2",gender_2);
+	InsideParam2.put("place_of_issue_2",passport_place_of_issue_2);
+	InsideParam2.put("passport_country_of_issue_2",passport_country_of_issue_2);
+	InsideParam2.put("current_nationality_2",nationality_2);
+	InsideParam2.put("middle_name_2",middle_name_2);
+	InsideParam2.put("title_2",title_2);
+	InsideParam2.put("passport_issue_date_2",passport_issued_date_2);
+	InsideParam2.put("date_of_birth_2",date_of_birth_2);
+	InsideParam2.put("roles_2",roles_2);
+	InsideParam2.put("gen_man_2",gen_man_2);
+	InsideParam2.put("2_address_line_1",second_address_line_1);
+	InsideParam2.put("2_address_line_2",second_address_line_2);
+	InsideParam2.put("2_po_box",second_po_box);
+	InsideParam2.put("2_postal_code",second_postal_code);
+	InsideParam2.put("2_city",second_city);
+	InsideParam2.put("2_state_province",second_state_province);
+	InsideParam2.put("2_country",second_country);
+	InsideParam2.put("file_number_2",file_number_2);
+	InsideParam2.put("passport_file_2",passport_file_2);
+	InsideParam2.put("passport_image_2",passport_image_2);
+	InsideParam2.put("emirates_id_number_2",emirates_id_number_2);
+	InsideParam2.put("provide_uid_number_2",provide_uid_number_2);
+	InsideParam2.put("2_father_first_name",second_fathers_first_name);
+	InsideParam2.put("2_father_middle_name",second_fathers_middle_name);
+	InsideParam2.put("2_father_last_name",second_fathers_last_name);
+	InsideParam2.put("passport_url_2",passport_url_2);
+	InsideParam2.put("company_member_name_2",company_member_name_2);
+	InsideParam2.put("first_name_3",first_name_3);
+	InsideParam2.put("middle_name_3",middle_name_3);
+	InsideParam2.put("last_name_3",last_name_3);
+	InsideParam2.put("email_3",email_3);
+	InsideParam2.put("mobile_3",mobile_3);
+	InsideParam2.put("passport_expiry_date_3",passport_expiry_date_3);
+	InsideParam2.put("country_of_birth_3",country_of_birth_3);
+	InsideParam2.put("passport_number_3",passport_number_3);
+	InsideParam2.put("gender_3",gender_3);
+	InsideParam2.put("passport_place_of_issue_3",passport_place_of_issue_3);
+	InsideParam2.put("passport_country_of_issue_3",passport_country_of_issue_3);
+	InsideParam2.put("current_nationality_3",nationality_3);
+	InsideParam2.put("title_3",title_3);
+	InsideParam2.put("place_of_issue_3",passport_place_of_issue_3);
+	InsideParam2.put("passport_issue_date_3",passport_issued_date_3);
+	InsideParam2.put("date_of_birth_3",date_of_birth_3);
+	InsideParam2.put("roles_3",roles_3);
+	InsideParam2.put("gen_man_3",gen_man_3);
+	InsideParam2.put("3_address_line_1",third_address_line_1);
+	InsideParam2.put("3_address_line_2",third_address_line_2);
+	InsideParam2.put("3_po_box",third_po_box);
+	InsideParam2.put("3_postal_code",third_postal_code);
+	InsideParam2.put("3_city",third_city);
+	InsideParam2.put("3_state_province",third_state_province);
+	InsideParam2.put("3_country",third_country);
+	InsideParam2.put("3_fathers_first_name",third_fathers_first_name);
+	InsideParam2.put("3_fathers_middle_name",third_fathers_middle_name);
+	InsideParam2.put("3_fathers_last_name",third_fathers_last_name);
+	InsideParam2.put("file_number_3",file_number_3);
+	InsideParam2.put("passport_file_3",passport_file_3);
+	InsideParam2.put("passport_image_3",passport_image_3);
+	InsideParam2.put("emirates_id_number_3",emirates_id_number_3);
+	InsideParam2.put("provide_uid_number_3",provide_uid_number_3);
+	InsideParam2.put("passport_url_3",passport_url_3);
+	InsideParam2.put("company_member_name_3",company_member_name_3);
+	InsideParam2.put("first_name_4",first_name_4);
+	InsideParam2.put("last_name_4",last_name_4);
+	InsideParam2.put("email_4",email_4);
+	InsideParam2.put("mobile_4",mobile_4);
+	InsideParam2.put("passport_expiry_date_4",passport_expiry_date_4);
+	InsideParam2.put("country_of_birth_4",country_of_birth_4);
+	InsideParam2.put("passport_number_4",passport_number_4);
+	InsideParam2.put("gender_4",gender_4);
+	InsideParam2.put("place_of_issue_4",passport_place_of_issue_4);
+	InsideParam2.put("passport_country_of_issue_4",passport_country_of_issue_4);
+	InsideParam2.put("current_nationality_4",nationality_4);
+	InsideParam2.put("middle_name_4",middle_name_4);
+	InsideParam2.put("title_4",title_4);
+	InsideParam2.put("passport_issue_date_4",passport_issued_date_4);
+	InsideParam2.put("date_of_birth_4",date_of_birth_4);
+	InsideParam2.put("roles_4",roles_4);
+	InsideParam2.put("gen_man_4",gen_man_4);
+	InsideParam2.put("4_address_line_1",forth_address_line_1);
+	InsideParam2.put("4_address_line_2",forth_address_line_2);
+	InsideParam2.put("4_po_box",forth_po_box);
+	InsideParam2.put("4_postal_code",forth_postal_code);
+	InsideParam2.put("4_city",forth_city);
+	InsideParam2.put("4_state_province",forth_state_province);
+	InsideParam2.put("4_country",forth_country);
+	InsideParam2.put("4_fathers_first_name",forth_fathers_first_name);
+	InsideParam2.put("4_fathers_middle_name",forth_fathers_middle_name);
+	InsideParam2.put("4_fathers_last_name",forth_fathers_last_name);
+	InsideParam2.put("file_number_4",file_number_4);
+	InsideParam2.put("passport_file_4",passport_file_4);
+	InsideParam2.put("passport_image_4",passport_image_4);
+	InsideParam2.put("emirates_id_number_4",emirates_id_number_4);
+	InsideParam2.put("provide_uid_number_4",provide_uid_number_4);
+	InsideParam2.put("passport_url_4",passport_url_4);
+	InsideParam2.put("company_member_name_4",company_member_name_4);
+	InsideParam2.put("first_name_5",first_name_5);
+	InsideParam2.put("last_name_5",last_name_5);
+	InsideParam2.put("mobile_5",mobile_5);
+	InsideParam2.put("passport_expiry_date_5",passport_expiry_date_5);
+	InsideParam2.put("country_of_birth_5",country_of_birth_5);
+	InsideParam2.put("email_5",email_5);
+	InsideParam2.put("passport_number_5",passport_number_5);
+	InsideParam2.put("gender_5",gender_5);
+	InsideParam2.put("place_of_issue_5",passport_place_of_issue_5);
+	InsideParam2.put("passport_country_of_issue_5",passport_country_of_issue_5);
+	InsideParam2.put("current_nationality_5",nationality_5);
+	InsideParam2.put("middle_name_5",middle_name_5);
+	InsideParam2.put("title_5",title_5);
+	InsideParam2.put("passport_issue_date_5",passport_issued_date_5);
+	InsideParam2.put("date_of_birth_5",date_of_birth_5);
+	InsideParam2.put("roles_5",roles_5);
+	InsideParam2.put("gen_man_5",gen_man_5);
+	InsideParam2.put("5_address_line_1",fifth_address_line_1);
+	InsideParam2.put("5_address_line_2",fifth_address_line_2);
+	InsideParam2.put("5_po_box",fifth_po_box);
+	InsideParam2.put("5_postal_code",fifth_postal_code);
+	InsideParam2.put("5_city",fifth_city);
+	InsideParam2.put("5_state_province",fifth_state_province);
+	InsideParam2.put("5_country",fifth_country);
+	InsideParam2.put("5_fathers_first_name",fifth_fathers_first_name);
+	InsideParam2.put("5_fathers_middle_name",fifth_fathers_middle_name);
+	InsideParam2.put("5_fathers_last_name",fifth_fathers_last_name);
+	InsideParam2.put("file_number_5",file_number_5);
+	InsideParam2.put("passport_file_5",passport_file_5);
+	InsideParam2.put("passport_image_5",passport_image_5);
+	InsideParam2.put("emirates_id_number_5",emirates_id_number_5);
+	InsideParam2.put("provide_uid_number_5",provide_uid_number_5);
+	InsideParam2.put("passport_url_5",passport_url_5);
+	InsideParam2.put("company_member_name_5",company_member_name_5);
+	InsideParam2.put("first_name_6",first_name_6);
+	InsideParam2.put("last_name_6",last_name_6);
+	InsideParam2.put("email_6",email_6);
+	InsideParam2.put("passport_number_6",passport_number_6);
+	InsideParam2.put("gender_6",gender_6);
+	InsideParam2.put("mobile_6",mobile_6);
+	InsideParam2.put("passport_expiry_date_6",passport_expiry_date_6);
+	InsideParam2.put("country_of_birth_6",country_of_birth_6);
+	InsideParam2.put("place_of_issue_6",passport_place_of_issue_6);
+	InsideParam2.put("passport_country_of_issue_6",passport_country_of_issue_6);
+	InsideParam2.put("current_nationality_6",nationality_6);
+	InsideParam2.put("middle_name_6",middle_name_6);
+	InsideParam2.put("title_6",title_6);
+	InsideParam2.put("passport_issue_date_6",passport_issued_date_6);
+	InsideParam2.put("date_of_birth_6",date_of_birth_6);
+	InsideParam2.put("roles_6",roles_6);
+	InsideParam2.put("gen_man_6",gen_man_6);
+	InsideParam2.put("6_address_line_1",sixth_address_line_1);
+	InsideParam2.put("6_address_line_2",sixth_address_line_2);
+	InsideParam2.put("6_po_box",sixth_po_box);
+	InsideParam2.put("6_postal_code",sixth_postal_code);
+	InsideParam2.put("6_city",sixth_city);
+	InsideParam2.put("6_state_province",sixth_state_province);
+	InsideParam2.put("6_country",sixth_country);
+	InsideParam2.put("6_fathers_first_name",sixth_fathers_first_name);
+	InsideParam2.put("6_fathers_middle_name",sixth_fathers_middle_name);
+	InsideParam2.put("6_fathers_last_name",sixth_fathers_last_name);
+	InsideParam2.put("file_number_6",file_number_6);
+	InsideParam2.put("passport_file_6",passport_file_6);
+	InsideParam2.put("passport_image_6",passport_image_6);
+	InsideParam2.put("emirates_id_number_6",emirates_id_number_6);
+	InsideParam2.put("provide_uid_number_6",provide_uid_number_6);
+	InsideParam2.put("passport_url_6",passport_url_6);
+	InsideParam2.put("company_member_name_6",company_member_name_6);
+	InsideParam2.put("first_name_7",first_name_7);
+	InsideParam2.put("last_name_7",last_name_7);
+	InsideParam2.put("email_7",email_7);
+	InsideParam2.put("mobile_7",mobile_7);
+	InsideParam2.put("passport_expiry_date_7",passport_expiry_date_7);
+	InsideParam2.put("country_of_birth_7",country_of_birth_7);
+	InsideParam2.put("passport_number_7",passport_number_7);
+	InsideParam2.put("gender_7",gender_7);
+	InsideParam2.put("place_of_issue_7",passport_place_of_issue_7);
+	InsideParam2.put("passport_country_of_issue_7",passport_country_of_issue_7);
+	InsideParam2.put("current_nationality_7",nationality_7);
+	InsideParam2.put("middle_name_7",middle_name_7);
+	InsideParam2.put("title_7",title_7);
+	InsideParam2.put("passport_issue_date_7",passport_issued_date_7);
+	InsideParam2.put("date_of_birth_7",date_of_birth_7);
+	InsideParam2.put("roles_7",roles_7);
+	InsideParam2.put("gen_man_7",gen_man_7);
+	InsideParam2.put("7_address_line_1",seven_address_line_1);
+	InsideParam2.put("7_address_line_2",seven_address_line_2);
+	InsideParam2.put("7_po_box",seven_po_box);
+	InsideParam2.put("7_postal_code",seven_postal_code);
+	InsideParam2.put("7_city",seven_city);
+	InsideParam2.put("7_state_province",seven_state_province);
+	InsideParam2.put("7_country",seven_country);
+	InsideParam2.put("7_fathers_first_name",seven_fathers_first_name);
+	InsideParam2.put("7_fathers_middle_name",seven_fathers_middle_name);
+	InsideParam2.put("7_fathers_last_name",seven_fathers_last_name);
+	InsideParam2.put("file_number_7",file_number_7);
+	InsideParam2.put("passport_file_7",passport_file_7);
+	InsideParam2.put("passport_image_7",passport_image_7);
+	InsideParam2.put("emirates_id_number_7",emirates_id_number_7);
+	InsideParam2.put("provide_uid_number_7",provide_uid_number_7);
+	InsideParam2.put("passport_url_7",passport_url_7);
+	InsideParam2.put("company_member_name_7",company_member_name_7);
+	InsideParam2.put("embed_1",embed_1);
+	InsideParam2.put("ubo",ubo_type);
+	InsideParam2.put("shareholder1",shareholder1);
+	InsideParam2.put("shareholder2",shareholder2);
+	InsideParam2.put("shareholder3",shareholder3);
+	InsideParam2.put("shareholder4",shareholder4);
+	InsideParam2.put("shareholder5",shareholder5);
+	InsideParam2.put("shareholder6",shareholder6);
+	InsideParam2.put("shareholder7",shareholder7);
+	InsideParam2.put("uae_resident_1",uae_resident_1);
+	InsideParam2.put("uae_resident_2",uae_resident_2);
+	InsideParam2.put("uae_resident_3",uae_resident_3);
+	InsideParam2.put("uae_resident_4",uae_resident_4);
+	InsideParam2.put("uae_resident_5",uae_resident_5);
+	InsideParam2.put("uae_resident_6",uae_resident_6);
+	InsideParam2.put("uae_resident_7",uae_resident_7);
+	InsideParam2.put("nos1",nos1);
+	InsideParam2.put("nos2",nos2);
+	InsideParam2.put("nos3",nos3);
+	InsideParam2.put("nos4",nos4);
+	InsideParam2.put("nos5",nos5);
+	InsideParam2.put("nos6",nos6);
+	InsideParam2.put("nos7",nos7);
+	company_member_list.add(InsideParam2);
+	outsideParam = Map();
+	outsideParam.put("doc_name","License Application Form");
+	file = zoho.writer.mergeAndStore("sz6eg72c8dfbaeb854675a1dbd9c05187605f",company_member_list,outsideParam,"writercrm2");
+	forSignature = file.getJson("document_id").toString();
+	info "File ID: " + forSignature;
+	//Upload License Application Form
+	filelist = List();
+	param = Map();
+	param.put("format","pdf");
+	download_res = invokeurl
+	[
+		url :"https://zohoapis.com/writer/api/v1/download/" + forSignature
+		type :GET
+		parameters:param
+		connection:"writercrm2"
+	];
+	info "Download Res: " + download_res;
+	download_res.setparamname("file");
+	upload_res = invokeurl
+	[
+		url :"https://www.zohoapis.com/crm/v5/files"
+		type :POST
+		files:download_res
+		connection:"crm_files"
+	];
+	fileid = upload_res.getJSON("data").get(0).getJSON("details").getJSON("id");
+	//Set the Reset Trigger Time for the Download button only
+	current_time = zoho.currenttime.addMinutes(1);
+	reset_time = current_time.toString("yyyy-MM-dd'T'HH:mm:ss+04:00");
+	//Map the data of the newly updated filename
+	fmp = Map();
+	fmp.put("file_id",fileid);
+	filelist.add(fmp);
+	mp = Map();
+	mp.put("License_Application_Form",filelist);
+	mp.put("Reset_Button_Trigger_Value",reset_time);
+	update = zoho.crm.updateRecord("New_License_Forms",new_license_id.toLong(),mp,{"trigger":{"workflow"}});
+	info "Update: " + update;
+	app_map = Map();
+	app_map.put("License_App_Trigger",true);
+	app_res = zoho.crm.updateRecord("Applications1",application_id,app_map,{"trigger":{"workflow"}});
+}
