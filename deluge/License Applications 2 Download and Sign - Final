@@ -23,9 +23,17 @@ if(contact_partner_only == false)
 			date_field_category = sign_field.getjson("field_category");
 			date_field_type_name = sign_field.getjson("field_type_name");
 		}
+		if(sign_field.getjson("field_type_name").containsIgnoreCase("Textfield"))
+		{
+			text_field_type_id = sign_field.getjson("field_type_id");
+			text_field_category = sign_field.getjson("field_category");
+			text_field_type_name = sign_field.getjson("field_type_name");
+		}
 	}
 	application_details = zoho.crm.getRelatedRecords("New_License_Application1","Applications1",application_id);
 	new_license_id = application_details.getjson("id");
+	first_suggested_name = application_details.getjson("First_Suggested_Name_English");
+	gen_man = application_details.getjson("Company_Member_GM");
 	filesLists = list();
 	new_format_filesLists = List();
 	final_format_filesLists = List();
@@ -2675,6 +2683,54 @@ if(contact_partner_only == false)
 				TLZTandCfieldsMap5.put("field_name","Signature");
 				TLZTandCfieldsMap5.put("field_type_name","Signature");
 				fieldList.add(TLZTandCfieldsMap5);
+				// //TLZ Terms and Conditions 3 - Company
+				TLZTandCfieldsMap7 = Map();
+				TLZTandCfieldsMap7.put("x_coord","420");
+				TLZTandCfieldsMap7.put("y_coord","400");
+				TLZTandCfieldsMap7.put("abs_height","20");
+				TLZTandCfieldsMap7.put("abs_width","20");
+				TLZTandCfieldsMap7.put("field_type_id",text_field_type_id);
+				TLZTandCfieldsMap7.put("field_category","textfield");
+				TLZTandCfieldsMap7.put("field_label","Company");
+				TLZTandCfieldsMap7.put("is_mandatory","false");
+				TLZTandCfieldsMap7.put("page_no","3");
+				TLZTandCfieldsMap7.put("document_id",doc_id);
+				TLZTandCfieldsMap7.put("field_name","Company");
+				TLZTandCfieldsMap7.put("default_value",first_suggested_name);
+				TLZTandCfieldsMap7.put("is_read_only",true);
+				fieldList.add(TLZTandCfieldsMap7);
+				// //TLZ Terms and Conditions 3 - Company Name
+				TLZTandCfieldsMap6 = Map();
+				TLZTandCfieldsMap6.put("x_coord","420");
+				TLZTandCfieldsMap6.put("y_coord","460");
+				TLZTandCfieldsMap6.put("abs_height","20");
+				TLZTandCfieldsMap6.put("abs_width","20");
+				TLZTandCfieldsMap6.put("field_type_id",text_field_type_id);
+				TLZTandCfieldsMap6.put("field_category","textfield");
+				TLZTandCfieldsMap6.put("field_label","General Manager");
+				TLZTandCfieldsMap6.put("is_mandatory","false");
+				TLZTandCfieldsMap6.put("page_no","3");
+				TLZTandCfieldsMap6.put("document_id",doc_id);
+				TLZTandCfieldsMap6.put("field_name","General Manager");
+				TLZTandCfieldsMap6.put("default_value",gen_man);
+				TLZTandCfieldsMap6.put("is_read_only",true);
+				fieldList.add(TLZTandCfieldsMap6);
+				// //TLZ Terms and Conditions 3 - Date
+				TLZTandCfieldsMap8 = Map();
+				TLZTandCfieldsMap8.put("x_coord","420");
+				TLZTandCfieldsMap8.put("y_coord","560");
+				TLZTandCfieldsMap8.put("abs_height","20");
+				TLZTandCfieldsMap8.put("abs_width","20");
+				TLZTandCfieldsMap8.put("field_type_id",text_field_type_id);
+				TLZTandCfieldsMap8.put("field_category","datefield");
+				TLZTandCfieldsMap8.put("field_label","Current Date");
+				TLZTandCfieldsMap8.put("is_mandatory","false");
+				TLZTandCfieldsMap8.put("page_no","3");
+				TLZTandCfieldsMap8.put("document_id",doc_id);
+				TLZTandCfieldsMap8.put("field_name","Current Date");
+				TLZTandCfieldsMap8.put("default_value",zoho.currentdate.toString("dd-MMM-yyyy"));
+				TLZTandCfieldsMap8.put("is_read_only",true);
+				fieldList.add(TLZTandCfieldsMap8);
 			}
 			if(total_pages > 4 || total_pages == 5)
 			{
