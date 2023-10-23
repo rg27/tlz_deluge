@@ -9,6 +9,7 @@ end_license_app_form = 0;
 if(contact_partner_only == false)
 {
 	sign_fields = zoho.sign.getFieldIds();
+	//1st loop
 	for each  sign_field in sign_fields.getjson("field_types")
 	{
 		if(sign_field.getjson("field_type_name").containsIgnoreCase("Signature"))
@@ -1519,6 +1520,7 @@ if(contact_partner_only == false)
 					license_app_formUboMap2.put("document_id",doc_id);
 					license_app_formUboMap2.put("field_name","Signature");
 					license_app_formUboMap2.put("field_type_name","Signature");
+					fieldList.add(license_app_formUboMap2);
 					license_app_formUboMap3 = Map();
 					license_app_formUboMap3.put("x_coord","370");
 					license_app_formUboMap3.put("y_coord","390");
@@ -1533,7 +1535,6 @@ if(contact_partner_only == false)
 					license_app_formUboMap3.put("field_name","Date");
 					license_app_formUboMap3.put("field_type_name","Date");
 					fieldList.add(license_app_formUboMap3);
-					fieldList.add(license_app_formUboMap2);
 					end_license_app_form = 1;
 				}
 				else
@@ -2683,7 +2684,7 @@ if(contact_partner_only == false)
 				TLZTandCfieldsMap5.put("field_name","Signature");
 				TLZTandCfieldsMap5.put("field_type_name","Signature");
 				fieldList.add(TLZTandCfieldsMap5);
-				// //TLZ Terms and Conditions 3 - Company
+				//TLZ Terms and Conditions 3 - Company
 				TLZTandCfieldsMap7 = Map();
 				TLZTandCfieldsMap7.put("x_coord","420");
 				TLZTandCfieldsMap7.put("y_coord","400");
@@ -3086,7 +3087,7 @@ if(contact_partner_only == false)
 			}
 			if(gm_name != name_4 && role_4.notContains("UBO") || gm_name != name_4 && role_4.containsIgnoreCase("UBO") && (role_4.containsIgnoreCase("General Manager") || role_4.containsIgnoreCase("Shareholder") || role_4.containsIgnoreCase("Secretary") || role_4.containsIgnoreCase("Director")))
 			{
-				action4List.add(company_member_license4_map);
+				action4List.add(company_member4_map);
 			}
 		}
 		if(doc_name.notContains("Property Price List") && doc_name.notContains("Property") && doc_name.notContains("Price List") && doc_name.notContains("Property") && doc_name.notContains("Office Pricing") && doc_name.notContains("Visa Licenses") && doc_name.notContains("plus") && doc_name.notContains("TLZ") && doc_name.notContains("terms") && doc_name.notContains("T-C") && doc_name.notContains("T&C") && doc_name.notContains("Terms") && doc_name.notContains("ifza") && doc_name.notContains("IFZA") && doc_name.notContains("Trade License Zone") && doc_name.notContains("License Application Form") && company_member_1 == 1 && company_member_2 == 1 && company_member_3 == 1 && company_member_4 == 1 && company_member_5 == 0 && doc_id != current_doc_id)
@@ -3129,7 +3130,7 @@ if(contact_partner_only == false)
 			}
 			if(gm_name != name_5 && role_5.notContains("UBO") || gm_name != name_5 && role_5.containsIgnoreCase("UBO") && (role_5.containsIgnoreCase("General Manager") || role_5.containsIgnoreCase("Shareholder") || role_5.containsIgnoreCase("Secretary") || role_5.containsIgnoreCase("Director")))
 			{
-				action5List.add(company_member_license5_map);
+				action5List.add(company_member5_map);
 			}
 		}
 		if(doc_name.notContains("Property Price List") && doc_name.notContains("Property") && doc_name.notContains("Price List") && doc_name.notContains("Property") && doc_name.notContains("Office Pricing") && doc_name.notContains("Visa Licenses") && doc_name.notContains("plus") && doc_name.notContains("TLZ") && doc_name.notContains("terms") && doc_name.notContains("T-C") && doc_name.notContains("T&C") && doc_name.notContains("Terms") && doc_name.notContains("ifza") && doc_name.notContains("IFZA") && doc_name.notContains("Trade License Zone") && doc_name.notContains("License Application Form") && company_member_1 == 1 && company_member_2 == 1 && company_member_3 == 1 && company_member_4 == 1 && company_member_5 == 1 && company_member_6 == 0 && doc_id != current_doc_id)
@@ -3171,7 +3172,7 @@ if(contact_partner_only == false)
 			}
 			if(gm_name != name_6 && role_6.notContains("UBO") || gm_name != name_6 && role_6.containsIgnoreCase("UBO") && (role_6.containsIgnoreCase("General Manager") || role_6.containsIgnoreCase("Shareholder") || role_6.containsIgnoreCase("Secretary") || role_6.containsIgnoreCase("Director")))
 			{
-				action6List.add(company_member_license6_map);
+				action6List.add(company_member6_map);
 			}
 		}
 		if(doc_name.notContains("Property Price List") && doc_name.notContains("Property") && doc_name.notContains("Price List") && doc_name.notContains("Property") && doc_name.notContains("Office Pricing") && doc_name.notContains("Visa Licenses") && doc_name.notContains("plus") && doc_name.notContains("TLZ") && doc_name.notContains("terms") && doc_name.notContains("T-C") && doc_name.notContains("T&C") && doc_name.notContains("Terms") && doc_name.notContains("ifza") && doc_name.notContains("IFZA") && doc_name.notContains("Trade License Zone") && doc_name.notContains("License Application Form") && company_member_1 == 1 && company_member_2 == 1 && company_member_3 == 1 && company_member_4 == 1 && company_member_5 == 1 && company_member_6 == 1 && company_member_7 == 0 && doc_id != current_doc_id)
@@ -3213,7 +3214,7 @@ if(contact_partner_only == false)
 			}
 			if(gm_name != name_7 && role_7.notContains("UBO") || gm_name != name_7 && role_7.containsIgnoreCase("UBO") && (role_7.containsIgnoreCase("General Manager") || role_7.containsIgnoreCase("Shareholder") || role_7.containsIgnoreCase("Secretary") || role_7.containsIgnoreCase("Director")))
 			{
-				action7List.add(company_member_license7_map);
+				action7List.add(company_member7_map);
 			}
 		}
 		if(doc_name.notContains("Property Price List") && doc_name.notContains("Property") && doc_name.notContains("Price List") && doc_name.notContains("Property") && doc_name.notContains("Office Pricing") && doc_name.notContains("Visa Licenses") && doc_name.notContains("plus") && doc_name.notContains("TLZ") && doc_name.notContains("terms") && doc_name.notContains("T-C") && doc_name.notContains("T&C") && doc_name.notContains("Terms") && doc_name.notContains("ifza") && doc_name.notContains("IFZA") && doc_name.notContains("Trade License Zone") && doc_name.notContains("License Application Form") && company_member_1 == 1 && company_member_2 == 1 && company_member_3 == 1 && company_member_4 == 1 && company_member_5 == 1 && company_member_6 == 1 && company_member_7 == 1 && company_member_8 == 0 && doc_id != current_doc_id)
@@ -3300,7 +3301,6 @@ if(contact_partner_only == false)
 		actionMap4.put("action_type","SIGN");
 		actionMap4.put("signing_order",0);
 		actionList.add(actionMap4);
-		info "Action 4 List: " + action4List;
 	}
 	if(cm_gm_5 == 0 && company_member_5 == 1)
 	{
@@ -3352,7 +3352,7 @@ if(contact_partner_only == false)
 	//Set the Support Executive Team as Viewer only
 	actionMap8 = Map();
 	actionMap8.put("recipient_name","Support Executive");
-	actionMap8.put("recipient_email","rey@tlz.ae");
+	actionMap8.put("recipient_email","support@tlz.ae");
 	actionMap8.put("action_type","VIEW");
 	actionMap8.put("signing_order",0);
 	actionList.add(actionMap8);
@@ -3539,7 +3539,7 @@ else
 	dataMap.put("requests",{"request_name":"Applications Form -" + account_name});
 	requestMap = Map();
 	requestMap.put("data",dataMap);
-	created_document_response = zoho.sign.createDocument(filesLists,requestMap,"sign_crm2");
+	created_document_response = zoho.sign.createDocument(filesLists,requestMap,"sign_crm");
 	info "Created Document Response: " + created_document_response;
 	req_id = created_document_response.getjson("requests").getjson("request_id");
 	info "Req_id: " + req_id;
