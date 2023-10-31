@@ -1,0 +1,51 @@
+var account_type = ZDK.Page.getField("Account_Type").getValue();
+let today = new Date();
+var account_related_records = ZDK.Apps.CRM.Accounts.fetchRelatedRecords($Page.record_id, "Residence_Visa")
+
+let user = ZDK.Apps.CRM.Users.fetchById($Crm.user.id);
+log("User ID: " + user.profile.name)
+if (user.profile.name != 'Accountant 1')
+{
+log("Account Related record: " + account_related_records);
+const tl_expiry_date_status = 0;
+
+    if (account_type != "Cancelled" && account_type != "Transferred to Authority" && account_type != "Transferred to Competitor")
+    {
+        if (account_related_records != "") {
+            let account_residence_visas = JSON.stringify(account_related_records);
+            let contactObj = JSON.parse(account_residence_visas);
+            for (var key of Object.keys(contactObj)) {
+                let status = contactObj[key]._Status;
+                let expiry_date = contactObj[key]._Expiry_Date;
+                if ((expiry_date === null || expiry_date === "null") && (status == "Cancelled" || status == "Transferred to Authority" || status == "Transferred to Competitor"))
+                {
+
+                }
+                else
+                {
+                    log("Status: " + status)
+                    log("Expiry Date: " + expiry_date)
+                    new_expiry_date = new Date(expiry_date);
+                    log("New Expiry Date: " + new_expiry_date);
+                    //Trade License 
+                    if (new_expiry_date === today && tl_expiry_date_status == 0 && status === "Issued")
+                    {
+                    
+                        ZDK.Client.showAlert('*One or more Residence Visa is Expired!*');
+                        tl_expiry_date_status = 1;
+                        
+                    }
+                    if ((new_expiry_date < today && tl_expiry_date_status == 0 && status === "Issued"))
+                    {
+                    
+                        ZDK.Client.showAlert('*One or more Residence Visa is Expired!*');
+                        tl_expiry_date_status = 1;
+                    }
+                }
+
+            }
+        }
+    }
+
+}
+    
