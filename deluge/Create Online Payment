@@ -1,0 +1,96 @@
+string validate_payment_received(string payment_id)
+{
+url1 = "https://accounts.zoho.com/oauth/v2/token";
+header_data1 = Map();
+header_data1.put("Content-Type","application/x-www-form-urlencoded");
+payloadMap2 = Map();
+payloadMap2.put("refresh_token","1000.6846ad6d3f6717040ca6ea5967205048.c0814283c1840072d6c12a61f403cada");
+payloadMap2.put("redirect_url","http://example.com/yourcallback");
+payloadMap2.put("client_id","1000.HLTT3CUSEPMVW9J66LUOTO977Y69XZ");
+payloadMap2.put("client_secret","f59b88f178e0704f86dcea0b6090c902c750048666");
+payloadMap2.put("grant_type","refresh_token");
+response2 = invokeurl
+[
+	url :url1
+	type :POST
+	parameters:payloadMap2
+	headers:header_data1
+];
+info response2;
+c_type = "Zoho-oauthtoken " + response2.get("access_token");
+headers_data = Map();
+headers_data.put("Authorization",c_type);
+headers_data.put("Content-Type","application/json");
+response = invokeurl
+[
+	url :"https://www.zohoapis.com/books/v3/customerpayments/" + payment_id + "?organization_id=682374092"
+	type :GET
+	headers:headers_data
+];
+amount_received = response.get("payment").get("amount");
+info "Amount Received: " + amount_received;
+amount_currency = response.get("payment").get("currency_code");
+info "Amount Currency: " + amount_currency;
+amount = amount_currency + amount_received;
+info "Amount: " + amount;
+c_name = response.get("payment").get("customer_name");
+date_received = response.get("payment").get("date").toString("dd-MMM-yyyy");
+info "Date: " + date_received;
+contact_id = response.get("payment").get("customer_id");
+info "Contact ID: " + contact_id;
+//Get Contacts
+contact_details = invokeurl
+[
+	url :"https://www.zohoapis.com/books/v3/contacts/" + contact_id + "?organization_id=682374092"
+	type :GET
+	headers:headers_data
+];
+info "Contact Details: " + contact_details;
+zcrm_account_id = contact_details.get("contact").get("zcrm_account_id");
+info "ZCRM Account ID: " + zcrm_account_id;
+crm_account_details = zoho.crm.getRecordById("Accounts",zcrm_account_id.toLong());
+primary_contact = crm_account_details.get("Primary_Contact_Name");
+info "Primary Contact: " + primary_contact;
+pc_email = crm_account_details.get("PC_Email");
+info "PC Email: " + pc_email;
+payment_link_id = response.get("payment").get("payment_link_id");
+searched_quote = zoho.crm.searchRecords("Quotes","(OP_ID:equals:" + payment_link_id + ")");
+quote_owner_email = searched_quote.getjson("Owner").getjson("email");
+info "Quote Owner Email: " + quote_owner_email;
+if(searched_quote.containsIgnoreCase("Deal_Name"))
+{
+	searched_quote_id = searched_quote.getjson("id");
+	info "Searched Quote ID: " + searched_quote_id;
+	mp = Map();
+	mp.put("OP_Status","Paid");
+	update_to_paid_status = zoho.crm.updateRecord("Quotes",searched_quote_id.toLong(),mp);
+	info "Update to Paid: " + update_to_paid_status;
+	parameters_map = {"payment_mode":"Card Payment - Pay by Link"};
+	update_customer_payment_response = invokeurl
+	[
+		url :"https://www.zohoapis.com/books/v3/customerpayments/" + payment_id + "?organization_id=682374092"
+		type :PUT
+		parameters:parameters_map.toString()
+		headers:headers_data
+	];
+	info "Update Mode of Payment: " + update_customer_payment_response;
+	// Email
+	email_body = "<div style=\"background: #fbfbfb;\"> <div style=\"padding:3%;text-align:center;background: #4190f2;\"><div style=\"color:#fff;font-size:20px;font-weight:500;\">Payment Received</div></div><div style=\"max-width:560px;margin:auto;padding: 0 5%;\"> <div style=\"padding: 30px 0; color: #555;line-height: 1.7;border-top:1px solid #eee; \">Dear&nbsp;" + primary_contact + ",</div><div style=\"padding: 30px 0; color: #555;line-height: 1.7;border-top:1px solid #eee; \">Thank you for your payment&nbsp;<span style=\"font-family: Calibri, sans-serif; font-size: 11pt;\">–&nbsp;</span>it was a pleasure doing business with you. We herewith attach a copy of your payment receipt and look forward to serving you again in the near future!&nbsp;</div><div style=\"padding: 3%; background: #fefff1; border: 1px solid #e8deb5; color: #333;\"> <div style=\"padding: 0 3% 3%; border-bottom: 1px solid #e8deb5; text-align: center;\"> <h3 style=\"margin-bottom: 0;\">Amount Received</h3> <h2 style=\"color: #49bd54; margin-top: 10px;\">" + amount + "</h2> </div><div style=\"margin:auto; max-width:350px; padding: 3% 3% 0;\"> <p>Invoice No<b>&nbsp;<span style=\"white-space:pre\">	</span>&nbsp;Advance Payment</b></p><p><b><br></b>Payment Date<span style=\"white-space: pre;\">	</span><b>&nbsp;" + date_received + "</b></p><p><b><br></b>Payment Mode<span style=\"white-space: pre;\">	</span>&nbsp;<b>Card Payment - Pay by Link</b></p></div></div><div style=\"max-width:560px;margin:auto;padding: 0 5%;\"><br></div><div style=\"padding: 3% 0;line-height: 1.6;\"><span style=\"color: rgb(85, 85, 85);\">If you have any questions feel free to contact us at finance@tlz.ae or +971 4 4396320.</span></div><div style=\"padding: 3% 0;line-height: 1.6;\"><span style=\"color: rgb(85, 85, 85);\"><br></span></div><div style=\"padding: 3% 0;line-height: 1.6;\"><font color=\"#555555\">Kind regards,</font><br><div style=\"color: #8c8c8c; font-weight: 400\"><span style=\"color: rgb(85, 85, 85);\"><br></span></div><div style=\"color: #8c8c8c; font-weight: 400\"><span style=\"color: rgb(85, 85, 85);\">Trade License Zone</span></div><div style=\"font-weight: 400; color: rgb(140, 140, 140);\"><br></div><div style=\"color: #b1b1b1\"><br></div></div></div></div>";
+	email_payload = {"send_from_org_email_id":true,"to_mail_ids":{pc_email},"cc_mail_ids":{quote_owner_email},"bcc_mail_ids":{"finance@tlz.ae"},"subject":"Thank you from Trade License Zone! " + c_name,"body":email_body};
+	// https://www.zohoapis.com/crm/v2.1/Accounts
+	url1 = "https://books.zoho.com/api/v3/customerpayments/" + payment_id + "/email?organization_id=" + 682374092;
+	send_email_response = invokeurl
+	[
+		url :url1
+		type :POST
+		parameters:email_payload.toString()
+		headers:headers_data
+	];
+	info "Send Email Response: " + send_email_response;
+}
+else
+{
+	info "false";
+}
+return "";
+}
