@@ -1,0 +1,99 @@
+quote_details = zoho.crm.getRecordById("Quotes",quote_id);
+account_id = ifnull(quote_details.get("Account_Name").get("id"),"");
+account_details = zoho.crm.getRecordById("Accounts",account_id.toLong());
+pc_email = account_details.get("PC_Email");
+contact_info = zoho.books.getRecords("Contacts","682374092","zcrm_account_id=" + account_id).getJSON("contacts");
+contact_id = contact_info.getjson("contact_id");
+payment_link_created = 0;
+grand_total = quote_details.get("Grand_Total").toDecimal();
+two_point_five_percent = grand_total / 100 * 2.5;
+final_grand_total = grand_total + two_point_five_percent + 2;
+link_expiration_date = today.addDay(5).toDate("yyyy-MM-dd");
+quote_ref_no = quote_details.get("Quote_Ref_No");
+subject_name = quote_details.get("Subject");
+description = quote_ref_no + " : " + subject_name;
+op_status = ifnull(quote_details.get("OP_Status"),"");
+finance_clearance = quote_details.get("Finance_Clearance");
+if(finance_clearance == false)
+{
+	if(op_status == null || op_status == "" || op_status == "Cancelled" || op_status == "Expired")
+	{
+		url1 = "https://accounts.zoho.com/oauth/v2/token";
+		header_data1 = Map();
+		header_data1.put("Content-Type","application/x-www-form-urlencoded");
+		payloadMap2 = Map();
+		payloadMap2.put("refresh_token","1000.e63019176e036a3c72af934e16deb0d5.107cd9f9fce4981b10ba6cbd077cab25");
+		payloadMap2.put("redirect_url","http://example.com/yourcallback");
+		payloadMap2.put("client_id","1000.Q85KZQPUEU5L8CH8D6GEQ359IECPQT");
+		payloadMap2.put("client_secret","6367ac6bef20ced5f5c57fd02cc74d5a195e2f0689");
+		payloadMap2.put("grant_type","refresh_token");
+		response2 = invokeurl
+		[
+			url :url1
+			type :POST
+			parameters:payloadMap2
+			headers:header_data1
+		];
+		// info "Response 2: " + response2;
+		url2 = "https://www.zohoapis.com/books/v3/paymentlinks?organization_id=682374092";
+		c_type = "Zoho-oauthtoken " + response2.get("access_token");
+		// info "C- Type: " + c_type;
+		header_data2 = Map();
+		header_data2.put("Content-Type","application/x-www-form-urlencoded");
+		header_data2.put("Authorization",c_type);
+		payload = {"JSONString":{"customer_id":contact_id,"payment_amount":final_grand_total.round(2),"description":description,"expiry_time":link_expiration_date}};
+		response3 = invokeurl
+		[
+			url :url2
+			type :POST
+			parameters:payload
+			headers:header_data2
+		];
+		info "Response 3: " + response3;
+		if(response3.containsIgnoreCase("success"))
+		{
+			op_url = response3.getjson("payment_link").getjson("url");
+			info "OP URL: " + op_url;
+			op_expiry = response3.getjson("payment_link").getjson("expiry_time");
+			op_id = response3.getjson("payment_link").getjson("payment_link_id");
+			op_link_number = response3.getjson("payment_link").getjson("payment_link_number");
+			payment_amount = response3.getjson("payment_link").getjson("payment_amount");
+			info "OP Expiry: " + op_expiry;
+			mp = Map();
+			mp.put("Payment_Link",op_url);
+			mp.put("OP_Expiry",op_expiry);
+			mp.put("OP_Status","Generated");
+			mp.put("OP_ID",op_id);
+			mp.put("OP_Link_Number",op_link_number);
+			mp.put("Payment_Amount",payment_amount);
+			res = zoho.crm.updateRecord("Quotes",quote_id,mp,{"trigger":{"workflow"}});
+			payment_link_created = 1;
+			template_data = {"id":3769920000172715192};
+			email_payload = {"data":{{"from":{"email":"finance@tlz.ae"},"to":{{"email":pc_email}},"inventory_details":{"inventory_template":{"id":"3769920000037897018","name":quote_ref_no + " " + subject_name}},"org_email":true,"mail_format":"html","template":template_data}}};
+			// https://www.zohoapis.com/crm/v2.1/Accounts
+			url1 = "https://www.zohoapis.com/crm/v2.1/Quotes/" + quote_id + "/actions/send_mail";
+			response = invokeurl
+			[
+				url :url1
+				type :POST
+				parameters:email_payload.toString()
+				connection:"send_mail"
+			];
+			info "Send Email: " + response;
+			return "You successfully created the Payment Link";
+		}
+	}
+	if(op_status.containsIgnoreCase("Paid") && payment_link_created == 0)
+	{
+		return "The Quote is already paid. Check with the Finance Team.";
+	}
+	if(op_status.containsIgnoreCase("Generated") && payment_link_created == 0)
+	{
+		return "The Quote is an existing Online-Payment Link. Please check with Finance Team if you wish it cancelled.";
+	}
+}
+else
+{
+	return "The quote has been cleared by Finance. If you wish to request for Online Payment link please coordinate with Finance.";
+}
+return "";
