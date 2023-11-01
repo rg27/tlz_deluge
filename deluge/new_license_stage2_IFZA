@@ -1,0 +1,78 @@
+var app_type = ZDK.Page.getField("Type").getValue();
+var app_stage = ZDK.Page.getField("New_Resident_Visa_Stage").getValue();
+var juris = ZDK.Page.getField("License_Jurisdiction").getValue();
+
+if ((app_type == "New Trade License" && juris == "International Free Zone Authority" ))
+{
+    if (app_stage == "Send Client For Signature")
+    {
+        log("Stage 1: " + stage);
+        var application_id = $Page.record_id;
+        var parameters = {};
+        var headers = {};
+        var app_details = ZDK.Apps.CRM.Applications1.fetchById(application_id);
+        var upload_files = app_details.Attachment;
+        log("Upload Files: " + upload_files);
+
+        var ifza_app_form_link = app_details.IFZA_App_Form_Link;
+        var ifza_tlz_tcs_link = app_details.TLZ_T_Cs_Link;
+        var app_form_from_ifza = app_details.App_Form_from_IFZA;
+        log("App Form: " + app_form_from_ifza)
+        // if (upload_files == null) {
+        //     ZDK.Client.showMessage('Error! Attach DOCs Required file upload field is empty', { type: 'error' });
+        //     return false;
+        // }
+    
+        // if (ifza_app_form_link == null) {
+        //     ZDK.Client.showMessage('Error! IFZA Application form is not added', { type: 'error' });
+        //     return false;
+        // }
+
+        if (ifza_tlz_tcs_link == null) {
+            ZDK.Client.showMessage('Error! TLZ and IFZA Terms and condition is not added', { type: 'error' });
+            return false;
+        }
+
+        if (app_form_from_ifza == null) {
+            ZDK.Client.showMessage('Error! Application Form from IFZA is not added', { type: 'error' });
+            return false;
+        }
+
+        // if (upload_files != null)
+        // {
+        //     var ifza_app_form_link = app_details.IFZA_App_Form_Link;
+        //     var ifza_tlz_tcs_link = app_details.TLZ_T_Cs_Link;
+        //     var app_form_from_ifza = app_details.App_Form_from_IFZA;
+        //     log("App Form: " + app_form_from_ifza)
+        //     // if (upload_files == null) {
+        //     //     ZDK.Client.showMessage('Error! Attach DOCs Required file upload field is empty', { type: 'error' });
+        //     //     return false;
+        //     // }
+        
+        //     // if (ifza_app_form_link == null) {
+        //     //     ZDK.Client.showMessage('Error! IFZA Application form is not added', { type: 'error' });
+        //     //     return false;
+        //     // }
+
+        //     if (ifza_tlz_tcs_link == null) {
+        //         ZDK.Client.showMessage('Error! TLZ and IFZA Terms and condition is not added', { type: 'error' });
+        //         return false;
+        //     }
+
+        //     if (app_form_from_ifza == null) {
+        //         ZDK.Client.showMessage('Error! Application Form from IFZA is not added', { type: 'error' });
+        //         return false;
+        //     }
+        // }
+        // else
+        // {
+        //     ZDK.Client.showMessage('Error! Attach DOCs Required file upload field is empty', { type: 'error' });
+        //     return false;
+        // }
+    }
+
+}
+
+
+
+
