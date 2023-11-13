@@ -1,0 +1,29 @@
+var app_type = ZDK.Page.getField("Type").getValue();
+log(app_type);
+
+if (app_type == "New Trade License")
+{
+    var accountId = ZDK.Page.getField('Account_Name').getValue().id;
+    log("Account id : " + accountId);
+    var accountDetails = ZDK.Apps.CRM.Accounts.fetchById(accountId);
+    var email = accountDetails.PC_Email
+    log(email);
+    var prospect_id = accountDetails.Primary_Contact_Lookup_Id
+    log(prospect_id)
+    var related_records = ZDK.Apps.CRM.Accounts.fetchRelatedRecords(accountId,"Deals");
+    related_records_details = related_records.find(related_records_details => related_records_details.Type === "New Trade License");
+    log("Related record details: " + related_records_details)
+    if (related_records_details != undefined)
+    {
+         var type = related_records_details.Type
+        log(type);
+
+        if (type == "New Trade License")
+        {
+            // ZDK.Client.showMessage('There is an existing New Trade License!!!!!', { type: 'warning' });
+            ZDK.Client.showAlert('There is an existing New Trade License!!!!!');
+            ZDK.Page.getField("Type").setValue(" ");
+            // ZDK.UI.freeze(true);
+        }
+    } 
+}
