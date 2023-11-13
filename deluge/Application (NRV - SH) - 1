@@ -1,0 +1,203 @@
+let app_type = ZDK.Page.getField("Type").getValue();
+let app_stage = ZDK.Page.getField("New_Resident_Visa_Stage").getValue();
+let juris = ZDK.Page.getField("License_Jurisdiction").getValue();
+let user = ZDK.Apps.CRM.Users.fetchById($Crm.user.id);
+if (user.profile.name == 'Administrator')
+{
+        var trans = transition.name
+        log("Transition Name: " + trans)
+        let status = ZDK.Page.getField("Status").getValue();
+        if ((app_type == "New Resident Visa" && juris == "Sharjah Media City" && (trans.includes("Remind Pending Requirements") || trans.includes("Send Visa Requirements to Client"))))
+        {
+            if (status != "Cancelled" && status != "Rejected")
+            {
+                    // if (app_stage == "Start") { }
+                    var application_id = $Page.record_id;
+                    var parameters = {};
+                    var headers = {};
+                    var app_details = ZDK.Apps.CRM.Applications1.fetchById(application_id);
+                    var application_new_visa_form = ZDK.Apps.CRM.Connections.invoke("all_crm_modules", "https://www.zohoapis.com/crm/v2/Applications1/" + application_id + "/Applications", "GET", 1, parameters, headers);
+                    var application_new_visa_form_string = JSON.stringify(application_new_visa_form);
+                    log("New Visa Form: " + application_new_visa_form_string)
+
+                    if (application_new_visa_form_string.includes("data") )
+                    {
+                            const first_name = JSON.stringify(application_new_visa_form._details.statusMessage.data[0].First_Name);
+                            const last_name = JSON.stringify(application_new_visa_form._details.statusMessage.data[0].Name);
+                            const email = JSON.stringify(application_new_visa_form._details.statusMessage.data[0].Email);
+                            const gm_email = JSON.stringify(application_new_visa_form._details.statusMessage.data[0].General_Manager_Email);
+                            const visa_service_required = JSON.stringify(application_new_visa_form._details.statusMessage.data[0].Service_Required_VISA_Type);
+                            const service_required_visa_sub_type = JSON.stringify(application_new_visa_form._details.statusMessage.data[0].Service_Required_Visa_Sub_Type);
+                            const business_partner = JSON.stringify(application_new_visa_form._details.statusMessage.data[0].Business_Partner);
+                            const free_for_life_promotion = JSON.stringify(application_new_visa_form._details.statusMessage.data[0].Free_For_Life_Promotion_2);
+
+                            //First Name Validation
+                            if (first_name == "null" || first_name == 'null' || first_name == null)
+                            {
+                                    var fname = " ◉ First Name";
+                                    var isFnameEmpty = 1;
+                            }
+                            else
+                            {
+                                    var fname = "";
+                            }
+
+                            //Last Name Validation
+                            if (last_name == "null" || last_name == 'null' || last_name == null)
+                            {
+                                    var lname = " ◉ Last Name";
+                                    var isLnameEmpty = 1;
+                            }
+                            else
+                            {
+                                    var lname = "";
+                            }
+
+                            //Email Validation
+                            if (email == "null" || email == 'null' || email == null)
+                            {
+                                    var client_email = " ◉ Email";
+                                    var isClientEmailEmpty = 1;
+                            }
+                            else
+                            {
+                                    var client_email = "";
+                            }
+
+                            //GM Email Validation
+                            if (gm_email == "null" || gm_email == 'null' || gm_email == null)
+                            {
+                                    var email_gm = " ◉ GM Email";
+                                    var isGmEmailEmpty = 1;
+                            }
+                            else
+                            {
+                                    var email_gm = "";
+                            }
+
+                            //Visa Service Required Validation
+                            if (visa_service_required == "null" || visa_service_required == 'null' || visa_service_required == null)
+                            {
+                                    var visa_service = " ◉ Visa Service Required";
+                                    var isVisaRequiredEmpty = 1;
+                            }
+                            else
+                            {
+                                    var visa_service = "";
+                            }
+
+                            //Service Required - Visa Sub Type Validation
+                            if (service_required_visa_sub_type == "null" || service_required_visa_sub_type == 'null' || service_required_visa_sub_type == null)
+                            {
+                                    var service_required = " ◉ Service Required - Visa Sub Type";
+                                    var isServiceRequiredEmpty = 1;
+                            }
+                            else
+                            {
+                                    var service_required = "";
+                            }
+
+                            //Business Partner Validation - Null
+                            if (business_partner == "null" || business_partner == 'null' || business_partner == null)
+                            {
+                                    var bp = " ◉ Business Partner";
+                                    var isBPEmpty = 1;
+                            }
+                            else
+                            {
+                                var bp = "";
+                            }
+
+                            //Business Partner Validation - YES
+                            log("Business Partner 1: " + business_partner)
+                            if (business_partner.includes("Yes") || business_partner == 'Yes')
+                            {
+                                log("Business Partner 2: " + business_partner)
+                                var bp_email_address = JSON.stringify(application_new_visa_form._details.statusMessage.data[0].BP_Email_Address);
+                                log("BP Email Address: " + bp_email_address)
+                                var bp_mobile = JSON.stringify(application_new_visa_form._details.statusMessage.data[0].BP_Mobile_Number);
+                                log("BP Mobile Number: " + bp_mobile)
+                                var bp_name = JSON.stringify(application_new_visa_form._details.statusMessage.data[0].Name_of_the_Business_Partner);
+                                log("Business Partner Name: " + bp_name)
+                                //Business Partner Email Address Validation
+                                if (bp_email_address == "null" || bp_email_address == 'null' || bp_email_address == null)
+                                {
+                                    log("BP Email Address: " + bp_email_address)
+                                    var bp_email = " ◉ BP Email Address";
+                                    var isBPEmailEmpty = 1;
+                                }
+                                else
+                                {
+                                    var bp_email = "";
+                                }
+
+                                //Business Partner Mobile Validation
+                                if (bp_mobile == "null" || bp_mobile == 'null' || bp_mobile == null)
+                                {
+                                    log("BP Mobile Number: " + bp_mobile)
+                                    var mobile_bp = " ◉ BP Mobile Number";
+                                    var isBPMobileEmpty = 1;
+                                }
+                                else
+                                {
+                                    var mobile_bp = "";
+                                }
+
+                                //Name of the Business Partner Validation
+                                if (bp_name == "null" || bp_name == 'null' || bp_name == null)
+                                {
+                                    log("Business Partner Name: " + bp_name)
+                                    var name_bp = " ◉ Name of the Business Partner";
+                                    var isBPNameEmpty = 1;
+                                }
+                                else
+                                {
+                                    var name_bp = "";
+                                }
+                                
+                            }
+
+                            //Free for life Promotion Validation
+                            if (free_for_life_promotion == "null" || free_for_life_promotion == 'null' || free_for_life_promotion == null)
+                            {
+                                    var ffl = " ◉ Free-For-Life Promotion?";
+                                    var isFFLEmpty = 1;
+                            }
+                            else
+                            {
+                                    var ffl = "";
+                            }
+
+                            if (business_partner.includes("Yes") || business_partner == 'Yes')
+                            {
+                                if (isFnameEmpty == 1 || isLnameEmpty == 1 || isClientEmailEmpty == 1 || isGmEmailEmpty == 1 || isVisaRequiredEmpty == 1 || isServiceRequiredEmpty == 1 || isBPEmpty == 1 || isFFLEmpty == 1 || isBPEmailEmpty == 1 || isBPMobileEmpty == 1 || isBPNameEmpty == 1)
+                                {
+                                    let empty_fields = fname + lname + client_email + email_gm + visa_service + service_required + bp + ffl + bp_email + mobile_bp + name_bp
+                                    // ZDK.Client.showMessage('Error! The following fields are empty: ' + empty_fields, { type: 'error' });
+                                    ZDK.Client.showAlert('Error! The following fields are empty: ' + empty_fields);
+                                    return false;
+                                } 
+                            }
+
+                            if (business_partner.includes("No") || business_partner == 'No')
+                            {
+                                if (isFnameEmpty == 1 || isLnameEmpty == 1 || isClientEmailEmpty == 1 || isGmEmailEmpty == 1 || isVisaRequiredEmpty == 1 || isServiceRequiredEmpty == 1 || isBPEmpty == 1 || isFFLEmpty == 1)
+                                {
+                                        let empty_fields = fname + lname + client_email + email_gm + visa_service + service_required + bp + ffl
+                                        // ZDK.Client.showMessage('Error! The following fields are empty: ' + empty_fields, { type: 'error' });
+                                    ZDK.Client.showAlert('Error! The following fields are empty: ' + empty_fields);
+                                    return false;
+                                }  
+                            }
+                    }
+            }
+            else
+            {
+                    // ZDK.Client.showMessage('Error! This is a *' +status+ '* application!.', { type: 'error' });
+                ZDK.Client.showAlert('Error! This is a *' + status + '* application!.');
+                return false;
+            }
+                
+        }
+  
+}
