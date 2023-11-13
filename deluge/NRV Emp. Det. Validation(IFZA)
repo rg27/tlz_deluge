@@ -1,0 +1,150 @@
+var app_type = ZDK.Page.getField("Type").getValue();
+var app_stage = ZDK.Page.getField("New_Resident_Visa_Stage").getValue();
+var juris = ZDK.Page.getField("License_Jurisdiction").getValue();
+
+
+//International Free Zone Authority
+if ((app_type == "New Resident Visa" && juris == "International Free Zone Authority"))
+{
+    if (app_stage == "Send Visa Requirements to Client" || app_stage == "Remind Pending Requirements" || app_stage == "Remind Pending Requirements 2")
+    {
+        var application_id = $Page.record_id;
+        log("App ID: " + application_id);
+        var parameters = {};
+        var headers = {};
+        var new_res_visa_form = ZDK.Apps.CRM.Connections.invoke("all_crm_modules", "https://www.zohoapis.com/crm/v2/Applications1/" + application_id + "/Applications", "GET", 1, parameters, headers);
+        log("New Visa Form - Test: " + new_res_visa_form);
+
+        var new_res_visa_form_string = JSON.stringify(new_res_visa_form);
+        log("App New License Stringify: " + new_res_visa_form_string);
+        if (new_res_visa_form_string.includes("data"))
+        {
+            const probation_period = JSON.stringify(new_res_visa_form._details.statusMessage.data[0].Probation_Period_0_6_months);
+            if (probation_period == "null" || probation_period == 'null')
+            {
+                ZDK.Client.showMessage('Error! The [Probation Period] field is Empty!', { type: 'error' });
+                return false;
+            }
+
+            const termination_notice = JSON.stringify(new_res_visa_form._details.statusMessage.data[0].Termination_Notice_1_3_months);
+            if (termination_notice == "null" || termination_notice == 'null')
+            {
+                ZDK.Client.showMessage('Error! The [Termination Notice(1-3) months] field is Empty!', { type: 'error' });
+                return false;
+            }
+
+            const return_ticket_eligibility = JSON.stringify(new_res_visa_form._details.statusMessage.data[0].Return_Ticket_Eligibility_Economy_Business_or_Fi);
+            if (return_ticket_eligibility == "null" || return_ticket_eligibility == 'null')
+            {
+                ZDK.Client.showMessage('Error! The [Return Ticket Eligibility (select Economy/Business or First Class)] field is Empty!', { type: 'error' });
+                return false;
+            }
+
+            const ticket_entitlement = JSON.stringify(new_res_visa_form._details.statusMessage.data[0].Ticket_Entitlement_Period_None_1_or_2_Years);
+            if (ticket_entitlement == "null" || ticket_entitlement == 'null')
+            {
+                ZDK.Client.showMessage('Error! The [Ticket Entitlement Period (None, 1 or 2 Years)] field is Empty!', { type: 'error' });
+                return false;
+            }
+
+            const annual_leave = JSON.stringify(new_res_visa_form._details.statusMessage.data[0].Annual_Leave_Entitlement);
+            if (annual_leave == "null" || annual_leave == 'null')
+            {
+                ZDK.Client.showMessage('Error! The [Annual Leave Entitlement] field is Empty!', { type: 'error' });
+                return false;
+            }
+
+            const please_specificy_leave_duration = JSON.stringify(new_res_visa_form._details.statusMessage.data[0].If_Working_Days_please_specify_leave_duration);
+            if (please_specificy_leave_duration == "null" || please_specificy_leave_duration == 'null')
+            {
+                ZDK.Client.showMessage('Error! The [Please specify leave duration] field is Empty!', { type: 'error' });
+                return false;
+            }
+
+            const type_of_employment_contract = JSON.stringify(new_res_visa_form._details.statusMessage.data[0].Type_of_Employment_Contract);
+            if (type_of_employment_contract == "null" || type_of_employment_contract == 'null')
+            {
+                ZDK.Client.showMessage('Error! The [Type of Employment Contract] field is Empty!', { type: 'error' });
+                return false;
+            }
+
+            const please_specify_duration_of_contract_in_months = JSON.stringify(new_res_visa_form._details.statusMessage.data[0].please_specify_duration_of_contract_in_months);
+            if (please_specify_duration_of_contract_in_months == "null" || please_specify_duration_of_contract_in_months == 'null')
+            {
+                ZDK.Client.showMessage('Error! The [Please specify duration of contract in months] field is Empty!', { type: 'error' });
+                return false;
+            }
+
+            const start_date = JSON.stringify(new_res_visa_form._details.statusMessage.data[0].Start_Date);
+            if (start_date == "null" || start_date == 'null')
+            {
+                ZDK.Client.showMessage('Error! The [Start Date] field is Empty!', { type: 'error' });
+                return false;
+            }
+
+            const education_qualifications = JSON.stringify(new_res_visa_form._details.statusMessage.data[0].Education_Qualifications);
+            log("Educational Qualifications: " + education_qualifications)
+            if (education_qualifications == "null" || education_qualifications == 'null')
+            {
+                ZDK.Client.showMessage('Error! The [Educational Qualifications] field is Empty!', { type: 'error' });
+                return false;
+            }
+        }
+    }
+}
+
+
+//Sharjah Media City
+if ((app_type == "New Resident Visa" && juris == "Sharjah Media City"))
+{
+    if (app_stage == "Send Visa Requirements to Client" || app_stage == "Remind Pending Requirements" || app_stage == "Remind Pending Requirements 2")
+    {
+    var application_id = $Page.record_id;
+    log("App ID: " + application_id);
+    var parameters = {};
+    var headers = {};
+    var new_res_visa_form = ZDK.Apps.CRM.Connections.invoke("all_crm_modules", "https://www.zohoapis.com/crm/v2/Applications1/" + application_id + "/Applications", "GET", 1, parameters, headers);
+    log("New Visa Form - Test: " + new_res_visa_form);
+
+    var new_res_visa_form_string = JSON.stringify(new_res_visa_form);
+    log("App New License Stringify: " + new_res_visa_form_string);
+    if (new_res_visa_form_string.includes("data"))
+        {
+            const please_specificy_leave_duration = JSON.stringify(new_res_visa_form._details.statusMessage.data[0].If_Working_Days_please_specify_leave_duration);
+            if (please_specificy_leave_duration == "null" || please_specificy_leave_duration == 'null')
+            {
+                ZDK.Client.showMessage('Error! The [Please specify leave duration] field is Empty!', { type: 'error' });
+                return false;
+            }
+
+            const type_of_employment_contract = JSON.stringify(new_res_visa_form._details.statusMessage.data[0].Type_of_Employment_Contract);
+            if (type_of_employment_contract == "null" || type_of_employment_contract == 'null')
+            {
+                ZDK.Client.showMessage('Error! The [Type of Employment Contract] field is Empty!', { type: 'error' });
+                return false;
+            }
+
+            const please_specify_duration_of_contract_in_months = JSON.stringify(new_res_visa_form._details.statusMessage.data[0].please_specify_duration_of_contract_in_months);
+            if (please_specify_duration_of_contract_in_months == "null" || please_specify_duration_of_contract_in_months == 'null')
+            {
+                ZDK.Client.showMessage('Error! The [Please specify duration of contract in months] field is Empty!', { type: 'error' });
+                return false;
+            }
+
+            const start_date = JSON.stringify(new_res_visa_form._details.statusMessage.data[0].Start_Date);
+            if (start_date == "null" || start_date == 'null')
+            {
+                ZDK.Client.showMessage('Error! The [Start Date] field is Empty!', { type: 'error' });
+                return false;
+            }
+
+            const education_qualifications = JSON.stringify(new_res_visa_form._details.statusMessage.data[0].Education_Qualifications);
+            log("Educational Qualifications: " + education_qualifications)
+            if (education_qualifications == "null" || education_qualifications == 'null')
+            {
+                ZDK.Client.showMessage('Error! The [Educational Qualifications] field is Empty!', { type: 'error' });
+                return false;
+            }
+        }
+    }
+}
