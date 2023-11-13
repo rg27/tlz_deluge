@@ -8,6 +8,23 @@ ubo_start = 0;
 end_license_app_form = 0;
 if(contact_partner_only == false)
 {
+	//Get Prospect Name and Email
+	account_related_prospects = zoho.crm.getRelatedRecords("Deals","Accounts",account_id.toLong());
+	for each  related_prospect in account_related_prospects
+	{
+		if(related_prospect.get("Type").containsIgnoreCase("New Trade License"))
+		{
+			info related_prospect.get("Type");
+			prospect_owner_email = related_prospect.get("Owner").get("email");
+			info "Prospect Owner Email: " + prospect_owner_email;
+			prospect_owner_name = related_prospect.get("Owner").get("name");
+			info "Prospect Owner Name: " + prospect_owner_name;
+		}
+		else
+		{
+			//nothing
+		}
+	}
 	sign_fields = zoho.sign.getFieldIds();
 	//1st loop
 	for each  sign_field in sign_fields.getjson("field_types")
@@ -219,7 +236,7 @@ if(contact_partner_only == false)
 				//License App form 2
 				license_app_formMap2 = Map();
 				license_app_formMap2.put("x_coord","435");
-				license_app_formMap2.put("y_coord","605");
+				license_app_formMap2.put("y_coord","610");
 				license_app_formMap2.put("abs_height","20");
 				license_app_formMap2.put("abs_width","20");
 				license_app_formMap2.put("field_type_id",sign_field_type_id);
@@ -294,7 +311,8 @@ if(contact_partner_only == false)
 				{
 					license_app_formMap3 = Map();
 					license_app_formMap3.put("x_coord","460");
-					license_app_formMap3.put("y_coord","590");
+					// 					license_app_formMap3.put("y_coord","590"); old
+					license_app_formMap3.put("y_coord","610");
 					license_app_formMap3.put("abs_height","20");
 					license_app_formMap3.put("abs_width","20");
 					license_app_formMap3.put("field_type_id",sign_field_type_id);
@@ -456,7 +474,8 @@ if(contact_partner_only == false)
 						//IFZA Terms and Conditions 4
 						license_app_formMap4 = Map();
 						license_app_formMap4.put("x_coord","430");
-						license_app_formMap4.put("y_coord","590");
+						license_app_formMap4.put("y_coord","610");
+						// 						license_app_formMap4.put("y_coord","590"); old
 						license_app_formMap4.put("abs_height","20");
 						license_app_formMap4.put("abs_width","20");
 						license_app_formMap4.put("field_type_id",sign_field_type_id);
@@ -2528,7 +2547,7 @@ if(contact_partner_only == false)
 				//IFZA Terms and Conditions 0
 				IFZATandCfieldsMap1 = Map();
 				IFZATandCfieldsMap1.put("x_coord","20");
-				IFZATandCfieldsMap1.put("y_coord","770");
+				IFZATandCfieldsMap1.put("y_coord","750");
 				IFZATandCfieldsMap1.put("abs_height","20");
 				IFZATandCfieldsMap1.put("abs_width","20");
 				IFZATandCfieldsMap1.put("field_type_id",sign_field_type_id);
@@ -2546,7 +2565,7 @@ if(contact_partner_only == false)
 				//IFZA Terms and Conditions 1
 				IFZATandCfieldsMap2 = Map();
 				IFZATandCfieldsMap2.put("x_coord","20");
-				IFZATandCfieldsMap2.put("y_coord","770");
+				IFZATandCfieldsMap2.put("y_coord","750");
 				IFZATandCfieldsMap2.put("abs_height","20");
 				IFZATandCfieldsMap2.put("abs_width","20");
 				IFZATandCfieldsMap2.put("field_type_id",sign_field_type_id);
@@ -2564,7 +2583,7 @@ if(contact_partner_only == false)
 				//IFZA Terms and Conditions 2
 				IFZATandCfieldsMap3 = Map();
 				IFZATandCfieldsMap3.put("x_coord","20");
-				IFZATandCfieldsMap3.put("y_coord","770");
+				IFZATandCfieldsMap3.put("y_coord","750");
 				IFZATandCfieldsMap3.put("abs_height","20");
 				IFZATandCfieldsMap3.put("abs_width","20");
 				IFZATandCfieldsMap3.put("field_type_id",sign_field_type_id);
@@ -2582,7 +2601,7 @@ if(contact_partner_only == false)
 				//IFZA Terms and Conditions 3
 				IFZATandCfieldsMap4 = Map();
 				IFZATandCfieldsMap4.put("x_coord","20");
-				IFZATandCfieldsMap4.put("y_coord","770");
+				IFZATandCfieldsMap4.put("y_coord","750");
 				IFZATandCfieldsMap4.put("abs_height","20");
 				IFZATandCfieldsMap4.put("abs_width","20");
 				IFZATandCfieldsMap4.put("field_type_id",sign_field_type_id);
@@ -3356,6 +3375,13 @@ if(contact_partner_only == false)
 	actionMap8.put("action_type","VIEW");
 	actionMap8.put("signing_order",0);
 	actionList.add(actionMap8);
+	//Set the Support Executive Team as Viewer only
+	actionMap8_1 = Map();
+	actionMap8_1.put("recipient_name",prospect_owner_name);
+	actionMap8_1.put("recipient_email",prospect_owner_email);
+	actionMap8_1.put("action_type","VIEW");
+	actionMap8_1.put("signing_order",0);
+	actionList.add(actionMap8_1);
 	//Create a map to store the request details 
 	requestMap = Map();
 	requestMap.put("request_name","License Application Form - " + account_name);
