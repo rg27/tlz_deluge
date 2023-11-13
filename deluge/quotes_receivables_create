@@ -1,0 +1,46 @@
+//Use Account Name Field Event Type
+var accountId = ZDK.Page.getField('Account_Name').getValue().id;
+log("Account id : " + accountId);
+
+var accountDetails = ZDK.Apps.CRM.Accounts.fetchById(accountId);
+log("account Details: " + accountDetails);
+var pc_id = accountDetails.Customer_ID ;
+log("PC ID: " + pc_id);
+
+//Generate Access Token
+var get_access_token = ZDK.HTTP.request({
+ url: 'https://accounts.zoho.com/oauth/v2/token',
+ method: 'POST',
+ content: {
+   refresh_token: '1000.a6bae093541b04a3a88a1de91b1b2002.b6d3ad08716392108aa2052655bffac4',
+   client_id: '1000.Q85KZQPUEU5L8CH8D6GEQ359IECPQT',
+   client_secret: '6367ac6bef20ced5f5c57fd02cc74d5a195e2f0689',
+   grant_type: 'refresh_token'
+ },
+ headers: {
+   'Content-Type': 'application/x-www-form-urlencoded'
+ }
+});
+
+var access_token_details = get_access_token.getResponse();
+log("Access token details: " + access_token_details);
+
+var obj1 = JSON.parse(access_token_details);
+var token1 = obj1.access_token;
+log("Token: " + token1);
+
+var auth = 'Zoho-oauthtoken' + token1
+var heads =  { 'Authorization': auth }
+var params = { }
+
+var url_code = "https://www.zohoapis.com/books/v3/contacts/" + pc_id + "?organization_id=682374092";
+const res = ZDK.Apps.CRM.Connections.invoke("read_books", url_code, "GET", 1, params, heads);
+
+const myJSON_outreceived = JSON.stringify(res._details.statusMessage.contact.outstanding_receivable_amount);
+log("Stringify: " + myJSON_outreceived)
+
+//It will only show if Outstanding Receivables have a value greater than 0
+if (myJSON_outreceived > 0 )
+{
+    ZDK.Client.showAlert('Outstanding Receivables: AED ' + myJSON_outreceived );
+}
