@@ -1,0 +1,35 @@
+let user = ZDK.Apps.CRM.Users.fetchById($Crm.user.id);
+if (user.profile.name != 'Administrator')
+{
+    var app_type = ZDK.Page.getField("Type").getValue();
+    var app_stage = ZDK.Page.getField("New_Resident_Visa_Stage").getValue();
+    var juris = ZDK.Page.getField("License_Jurisdiction").getValue();
+    var rv_registration_number = ZDK.Page.getField("VA_RV_Number").getValue();
+    if ((app_type == "New Resident Visa" && juris == "International Free Zone Authority"))
+    {
+        if (app_stage == "Notify Emirates ID Biometric Schedule to Visa Applicant" || app_stage == "Passport is ready for Collection" || app_stage == "Passport not needed for Visa Stamping" || app_stage == "Residence Visa Approval Process" || app_stage == "Notify Emirates ID Biometric Schedule to Visa Applicant_2")
+        {
+            var searched_reg_no = ZDK.Apps.CRM.Residence_Visa.searchByWord(rv_registration_number);
+            var searched_reg_no_string = JSON.stringify(searched_reg_no);
+            if (searched_reg_no_string.includes("Account_Name_Lookup"))
+            {
+                ZDK.Client.showMessage('*Error*! The RV Registration Number is already existing in Residence Visa module.', { type: 'error' });
+                return false;
+            }
+        }
+    }
+
+    if ((app_type == "New Resident Visa" && juris == "Sharjah Media City"))
+    {
+        if (app_stage == "Residence Visa Approval Process")
+        {
+            var searched_reg_no = ZDK.Apps.CRM.Residence_Visa.searchByWord(rv_registration_number);
+            var searched_reg_no_string = JSON.stringify(searched_reg_no);
+            if (searched_reg_no_string.includes("Account_Name_Lookup"))
+            {
+                ZDK.Client.showMessage('*Error*! The RV Registration Number is already existing in Residence Visa module.', { type: 'error' });
+                return false;
+            }
+        }
+    }
+}
