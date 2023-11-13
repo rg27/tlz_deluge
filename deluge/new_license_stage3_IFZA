@@ -1,0 +1,24 @@
+var app_type = ZDK.Page.getField("Type").getValue();
+var app_stage = ZDK.Page.getField("New_Resident_Visa_Stage").getValue();
+var juris = ZDK.Page.getField("License_Jurisdiction").getValue();
+
+if(app_type == "New Trade License" && juris == "International Free Zone Authority")
+{
+    if (app_stage == "Submitted to Authority")
+    {
+        var application_id = $Page.record_id;
+        log("App ID: " + application_id);
+        var parameters = {};
+        var headers = {};
+        var app_details = ZDK.Apps.CRM.Applications1.fetchById(application_id);
+        let application_new_license_form = ZDK.Apps.CRM.Connections.invoke("all_crm_modules", "https://www.zohoapis.com/crm/v2/Applications1/" + application_id + "/New_License_Application1", "GET", 1, parameters, headers);
+        var application_new_license_forms_string = JSON.stringify(application_new_license_form);
+        if (application_new_license_forms_string.includes("data")) {
+            let trigger_shareholder_contact_roles = JSON.stringify(application_new_license_form._details.statusMessage.data[0].Shareholders_and_Contact_Roles_updated);
+            if (trigger_shareholder_contact_roles === false || trigger_shareholder_contact_roles === "false") {
+                ZDK.Client.showLoader({ type: 'page', template: 'spinner', message: 'Please wait for a few seconds! The System still Adding/Updating the Contacts on the backend side...' });
+                log("Contact Roles Updated? False: " + trigger_shareholder_contact_roles);
+            }
+        }
+    }
+}
