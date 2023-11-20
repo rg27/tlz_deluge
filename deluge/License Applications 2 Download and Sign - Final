@@ -57,6 +57,7 @@ if(contact_partner_only == false)
 	final_format_filesLists = List();
 	company_member_list = List();
 	iterator_counter = 0;
+	//Get the license Application Form from New License Form
 	license_application_forms = application_details.getjson("License_Application_Form");
 	for each  license in license_application_forms
 	{
@@ -70,6 +71,7 @@ if(contact_partner_only == false)
 		filesLists.add(license_app_form);
 	}
 	license_type = ifnull(application_details.getjson("License_Type"),"");
+	//Get the Terms and Conditions and other needed files
 	for each  terms_and_condition in terms_and_conditions
 	{
 		if(terms_and_condition.get("file_Name").containsIgnoreCase("Trade License Zone") && terms_and_condition.get("file_Name").containsIgnoreCase("terms"))
@@ -117,6 +119,30 @@ if(contact_partner_only == false)
 		];
 		filesLists.add(download_response);
 	}
+	//Get the ifza Combo ffl package if not empty
+	ifza_combo_attachment = ifnull(app_details.get("Attachment"),"null");
+	if(ifza_combo_attachment == "null" || ifza_combo_attachment == null)
+	{
+		info "IFZA Combo - Null";
+	}
+	else
+	{
+		for each  ifza_combo in ifza_combo_attachment
+		{
+			if(ifza_combo.getjson("file_Name").containsIgnoreCase("PROMOTION"))
+			{
+				file_id = ifza_combo.getJson("file_Id");
+				license_app_form = invokeurl
+				[
+					url :"https://www.zohoapis.com/crm/v4/files?id=" + file_id
+					type :GET
+					connection:"crm_file_upload"
+				];
+				filesLists.add(license_app_form);
+			}
+		}
+	}
+	//Loop the Company Members
 	license_app_details = zoho.crm.getRelatedRecords("Company_Members","Applications1",application_id);
 	// info "License App Details: " + license_app_details;
 	for each  license_app in license_app_details
@@ -136,6 +162,7 @@ if(contact_partner_only == false)
 			gm_name = gm_fname + " " + gm_lname;
 			info "GM Name: " + gm_name;
 		}
+		//Get the Passport Files from Company Members
 		for each  passport_file in passport_files
 		{
 			file_id = passport_file.getJson("file_Id");
@@ -679,7 +706,8 @@ if(contact_partner_only == false)
 					{
 						license_app_formMap5 = Map();
 						license_app_formMap5.put("x_coord","460");
-						license_app_formMap5.put("y_coord","560");
+						license_app_formMap5.put("y_coord","610");
+						// 						license_app_formMap5.put("y_coord","560"); //old
 						license_app_formMap5.put("abs_height","20");
 						license_app_formMap5.put("abs_width","20");
 						license_app_formMap5.put("field_type_id",sign_field_type_id);
@@ -913,7 +941,7 @@ if(contact_partner_only == false)
 					{
 						license_app_formMap6 = Map();
 						license_app_formMap6.put("x_coord","450");
-						license_app_formMap6.put("y_coord","582");
+						license_app_formMap6.put("y_coord","610");
 						license_app_formMap6.put("abs_height","20");
 						license_app_formMap6.put("abs_width","20");
 						license_app_formMap6.put("field_type_id",sign_field_type_id);
@@ -1491,7 +1519,7 @@ if(contact_partner_only == false)
 					{
 						license_app_formMap7 = Map();
 						license_app_formMap7.put("x_coord","460");
-						license_app_formMap7.put("y_coord","575");
+						license_app_formMap7.put("y_coord","610");
 						license_app_formMap7.put("abs_height","20");
 						license_app_formMap7.put("abs_width","20");
 						license_app_formMap7.put("field_type_id",sign_field_type_id);
@@ -2940,6 +2968,60 @@ if(contact_partner_only == false)
 				IFZADXBPropertyPriceListfieldsMap2.put("field_name","Signature");
 				IFZADXBPropertyPriceListfieldsMap2.put("field_type_name","Signature");
 				fieldList.add(IFZADXBPropertyPriceListfieldsMap2);
+			}
+		}
+		//IFZA Combo FFL Package
+		if(doc_name.containsIgnoreCase("PROMOTION"))
+		{
+			if(total_pages > 0 || total_pages == 1)
+			{
+				//IFZA Combo  - Company Name
+				IFZAComboMap1 = Map();
+				IFZAComboMap1.put("x_coord","70");
+				IFZAComboMap1.put("y_coord","630");
+				IFZAComboMap1.put("abs_height","20");
+				IFZAComboMap1.put("abs_width","150");
+				IFZAComboMap1.put("field_type_id",text_field_type_id);
+				IFZAComboMap1.put("field_category","textfield");
+				IFZAComboMap1.put("field_label","Company");
+				IFZAComboMap1.put("is_mandatory","false");
+				IFZAComboMap1.put("page_no","0");
+				IFZAComboMap1.put("document_id",doc_id);
+				IFZAComboMap1.put("field_name","Company");
+				IFZAComboMap1.put("default_value",first_suggested_name);
+				IFZAComboMap1.put("is_read_only",true);
+				fieldList.add(IFZAComboMap1);
+				//IFZA Combo - Date
+				IFZAComboMap2 = Map();
+				IFZAComboMap2.put("x_coord","290");
+				IFZAComboMap2.put("y_coord","630");
+				IFZAComboMap2.put("abs_height","20");
+				IFZAComboMap2.put("abs_width","75");
+				IFZAComboMap2.put("field_type_id",text_field_type_id);
+				IFZAComboMap2.put("field_category","datefield");
+				IFZAComboMap2.put("field_label","Current Date");
+				IFZAComboMap2.put("is_mandatory","false");
+				IFZAComboMap2.put("page_no","0");
+				IFZAComboMap2.put("document_id",doc_id);
+				IFZAComboMap2.put("field_name","Current Date");
+				IFZAComboMap2.put("default_value",zoho.currentdate.toString("dd-MMM-yyyy"));
+				IFZAComboMap2.put("is_read_only",true);
+				fieldList.add(IFZAComboMap2);
+				//IFZA Combo - Signature
+				IFZAComboMap3 = Map();
+				IFZAComboMap3.put("x_coord","460");
+				IFZAComboMap3.put("y_coord","630");
+				IFZAComboMap3.put("abs_height","20");
+				IFZAComboMap3.put("abs_width","20");
+				IFZAComboMap3.put("field_type_id",sign_field_type_id);
+				IFZAComboMap3.put("field_category","image");
+				IFZAComboMap3.put("field_label","Signature");
+				IFZAComboMap3.put("is_mandatory","true");
+				IFZAComboMap3.put("page_no","0");
+				IFZAComboMap3.put("document_id",doc_id);
+				IFZAComboMap3.put("field_name","Signature");
+				IFZAComboMap3.put("field_type_name","Signature");
+				fieldList.add(IFZAComboMap3);
 			}
 		}
 		if(doc_name.notContains("Property Price List") && doc_name.notContains("Property") && doc_name.notContains("Price List") && doc_name.notContains("Property") && doc_name.notContains("Office Pricing") && doc_name.notContains("Visa Licenses") && doc_name.notContains("plus") && doc_name.notContains("TLZ") && doc_name.notContains("terms") && doc_name.notContains("T-C") && doc_name.notContains("T&C") && doc_name.notContains("Terms") && doc_name.notContains("ifza") && doc_name.notContains("IFZA") && doc_name.notContains("Trade License Zone") && doc_name.notContains("License Application Form") && company_member_1 == 0)
