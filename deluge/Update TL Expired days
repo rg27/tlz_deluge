@@ -1,0 +1,57 @@
+let user = ZDK.Apps.CRM.Users.fetchById($Crm.user.id);
+log("User ID: " + user)
+var other_expired_days_value = ZDK.Page.getField("Expired_Days").getValue();
+var expired_days = ZDK.Page.getField("Trade_License_Expired_Days");
+
+// if (user.profile.name != 'Accountant 1')
+// {
+    let account_details = ZDK.Apps.CRM.Accounts.fetchById($Page.record_id);
+    let tl_end_date = account_details.Trade_License_End_Date;
+    // let tl_expired_work_days = account_details.Trade_License_Expired_Days;
+    if (tl_end_date == null || tl_end_date === "null")
+    {
+       log("Nothing!!!!!!!!!!")
+    }
+    else
+    {
+        let current_date = new Date();
+        let final_tl_end_date = new Date(tl_end_date);
+        let current_expired_days = current_date - final_tl_end_date;
+        let final_number_of_days = Math.floor((current_expired_days) / 1000 / 60 / 60 / 24);
+        log("Final Number of Days: " + final_number_of_days)
+        if (other_expired_days_value === final_number_of_days)
+        {
+            log("Yes - The same Number of Workdays");
+            if (final_number_of_days >= 0)
+            {
+                log("Color - RED")
+                // expired_days.addStyle({ backgroundColor: '#FF0000', foregroundColor: '#ebeff0' });
+                expired_days.addStyle({ foregroundColor: '#FF0000', fontWeight: 'bold',  display:'block', borderStyle: 'solid', borderColor: '#FF0000'});
+              
+            }
+            else
+            {
+                 expired_days.addStyle({ foregroundColor: '#008000', fontWeight: 'bold', borderStyle: 'solid', borderColor: '#008000'});
+            }
+        }
+        else
+        {
+            account_details.Expired_Days = final_number_of_days;
+            var account_update = [account_details];
+            var response = ZDK.Apps.CRM.Accounts.update(account_update);
+            log("Response: " + response)
+            ZDK.Client.navigateTo('record_detail', { module: 'Accounts', record_id: $Page.record_id });
+            // Style the Expired Number
+            if (final_number_of_days >= 0)
+            {
+                log("Color - RED")
+                expired_days.addStyle({ foregroundColor: '#FF0000', fontWeight: 'bold',  display:'block', borderStyle: 'solid', borderColor: '#008000'});
+              
+            }
+            else
+            {
+                expired_days.addStyle({ foregroundColor: '#008000', fontWeight: 'bold'});
+            }
+        }
+    }
+// }
