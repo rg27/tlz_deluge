@@ -1,0 +1,79 @@
+contact_details = zoho.crm.getRecordById("Contacts",contact_id);
+contact_related_details = zoho.crm.getRelatedRecords("Leaves","Contacts",contact_id);
+remaining_leave = 0.0;
+email = contact_details.get("Email");
+info email;
+// get_user_details = zoho.crm.searchRecords("users", "(email:equals:"+ email +")");
+// get_user_id = get_user_details.getJson("users").getJson("id");
+// current_year = zoho.currentdate.getYear();
+current_login_id = zoho.loginuserid;
+info current_login_id;
+if(email.containsIgnoreCase("gil@tlz.ae") || email.containsIgnoreCase("roberto@tlz.ae") || email.containsIgnoreCase("jerome@tlz.ae"))
+{
+	if(current_login_id.containsIgnoreCase("rey@tlz.ae") || current_login_id.containsIgnoreCase("junlie@tlz.ae"))
+	{
+		for each  contact_related_detail in contact_related_details
+		{
+			if(contact_related_detail.get("Leave_Type").containsIgnoreCase("Annual") && contact_related_detail.get("Approval_Status").containsIgnoreCase("Approved"))
+			{
+				transact_days = contact_related_detail.get("Transaction_Workdays").toDecimal();
+				remaining_leave = remaining_leave + transact_days;
+				info remaining_leave;
+				if(remaining_leave.endsWith("00"))
+				{
+					leave = remaining_leave.toLong();
+				}
+				else
+				{
+					leave = remaining_leave.toDecimal();
+				}
+			}
+		}
+		if(leave.isNull())
+		{
+			return "Your Annual Leave Balance is: " + 0;
+		}
+		else
+		{
+			return "Your Annual Leave Balance is: " + leave;
+		}
+	}
+	else
+	{
+		return "Unable to Access!";
+	}
+}
+else
+{
+	if(current_login_id == email || current_login_id == "rey@tlz.ae" || current_login_id == "junlie@tlz.ae")
+	{
+		for each  contact_related_detail in contact_related_details
+		{
+			if(contact_related_detail.get("Leave_Type").containsIgnoreCase("Annual") && contact_related_detail.get("Approval_Status").containsIgnoreCase("Approved"))
+			{
+				transact_days = contact_related_detail.get("Transaction_Workdays").toDecimal();
+				remaining_leave = remaining_leave + transact_days;
+				if(remaining_leave.endsWith("00"))
+				{
+					leave = remaining_leave.toLong();
+				}
+				else
+				{
+					leave = remaining_leave.toDecimal();
+				}
+			}
+		}
+		if(leave.isNull())
+		{
+			return "Your Annual Leave Balance is: " + 0;
+		}
+		else
+		{
+			return "Your Annual Leave Balance is: " + leave;
+		}
+	}
+	else
+	{
+		return "Unable to access!";
+	}
+}
