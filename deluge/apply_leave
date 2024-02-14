@@ -1,0 +1,47 @@
+void file_leave(string email, string leave_type, string half_day, string fday_leave, string lday_leave, string ldate, string time, string comment)
+{
+// info "Email: " + email;
+// info "Leave Type: " + leave_type;
+// info "Half Day: " + half_day;
+// info "First Day: " + fday_leave;
+// info "Last Day: " + lday_leave;
+// info "Leave Date: " + ldate;
+// info "Time: " + time;
+// info "Comment: " + comment;
+// if ( leave_type == "" ) 
+// {
+// }
+//Return the Leave Types
+// people_res = invokeurl
+// [
+// 	url :"https://people.zoho.com/people/api/leave/getLeaveTypeDetails?userId=rey@tlz.ae"
+// 	type :GET
+// 	connection:"people_all"
+// ];
+// info "People Res: " + people_res;
+//Return all employees
+all_employees = invokeurl
+[
+	url :"https://people.zoho.com/people/api/forms/employee/getRecords?sIndex=1&limit=100"
+	type :GET
+	connection:"people_all"
+];
+info "All Employees: " + all_employees;
+//Annual Leave - 695935000000520195
+//Compensatory Leave - 695935000000541033
+//Sick Leave - 695935000000541007
+//Jerome - 695935000000543011
+//Erwin - 695935000000543006
+//Robert - 695935000000543001
+//John Doe - 695935000000541282
+//Rey - 695935000000480001
+from_date = '14/02/2024';
+to_date = '17/02/2024';
+create_leave_res = invokeurl
+[
+	url :"https://people.zoho.com/people/api/forms/json/leave/insertRecord?inputData={'Employee_ID':'695935000000541282','Leavetype':'695935000000520195','From':'19/02/2024','To':'27/02/2024','days':{'19/02/2024':{'LeaveCount':1, 'Session':2}}}"
+	type :POST
+	connection:"people_all"
+];
+info "Create Leave Response: " + create_leave_res;
+}
