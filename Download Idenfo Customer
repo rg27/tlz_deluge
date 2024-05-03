@@ -1,0 +1,106 @@
+aml_details = zoho.crm.getRecordById("AML_Compliances",aml_id);
+// info "Compliance Details: " + compliance_details;
+url_id = ifnull(aml_details.get("URL_ID"),"");
+first_name = ifnull(aml_details.get("First_Name"),"");
+last_name = ifnull(aml_details.get("Last_Name"),"");
+user_details = zoho.crm.getRecordById("users",user_id);
+group_name = user_details.getjson("users").getjson("profile").getjson("name");
+api_key = "c57ac48b-2409-48df-b8f0-c3871c7cda38";
+api_secret = "e39b5596521af541646cc3ae55794b6138ceaf97";
+url_login = "https://uaedirect.idenfo.com/api/users/login-endpoint";
+header_login = Map();
+// header_login.put("Content-Type","application/json");
+header_login.put("apiKey",api_key);
+header_login.put("apiSecret",api_secret);
+//login
+if(group_name.containsIgnoreCase("Administrator"))
+{
+	info "Admin Team!";
+	// 	raw = {"username":'rey@tlz.ae',"password":'P@$$word12'};
+	raw = {"username":'compliance@tlz.ae',"password":'Tlzaml@123!'};
+}
+if(group_name.containsIgnoreCase("Support Executive"))
+{
+	info "Support Team!";
+	raw = {"username":'support@tlz.ae',"password":'Tlzsup321!'};
+}
+if(group_name == "CRS on Licenses" || group_name == "Operations Manager")
+{
+	info "Renewals Team!";
+	raw = {"username":'renewals@tlz.ae',"password":'Tlzren321!'};
+}
+if(group_name.containsIgnoreCase("Business Setup Consultant") || group_name.containsIgnoreCase("Commercial Director"))
+{
+	info "Sales Team!";
+	raw = {"username":'sales@tlz.ae',"password":'Tlzsal321!'};
+}
+if(group_name == "CRS on Residence Visa")
+{
+	info "Visa Team!";
+	raw = {"username":'visas@tlz.ae',"password":'Tlzvis321!'};
+}
+if(group_name.containsIgnoreCase("General Accountant"))
+{
+	info "Finance Team!";
+	raw = {"username":'finance@tlz.ae',"password":'Tlzfin321!'};
+}
+if(group_name.notContains("General Accountant") && group_name != "CRS on Licenses" && group_name.notContains("Operations Manager") && group_name != "CRS on Residence Visa" && group_name.notContains("Business Setup Consultant") && group_name.notContains("Commercial Director") && group_name.notContains("Support Executive") && group_name.notContains("Administrator") && group_name.notContains("Operations Manager"))
+{
+	info "Ops Team!";
+	raw = {"username":'renewals@tlz.ae',"password":'Tlzren321!'};
+}
+login_res = invokeurl
+[
+	url :url_login
+	type :POST
+	parameters:raw.toString()
+	headers:header_login
+	content-type:"application/json"
+];
+access_token = login_res.getjson("data").get("accessToken");
+refresh_token = login_res.getjson("data").get("refreshToken");
+info "Access Token: " + access_token;
+// info "Refresh Token: " + refresh_token ;
+//Create Customer Header
+header_customer = Map();
+header_customer.put("apiKey",api_key);
+header_customer.put("apiSecret",api_secret);
+header_customer.put("Authorization","Bearer " + access_token);
+url_dowload_customer = "https://uaedirect.idenfo.com/api/customers/download-pdf/" + url_id;
+// url_dowload_customer = "https://uaedirect.idenfo.com/api/customers/fetch-customer-endpoint/71605";
+final_customer = Map();
+download_customer = invokeurl
+[
+	url :url_dowload_customer
+	type :GET
+	headers:header_customer
+];
+customer_file = download_customer.getjson("data").getjson("file");
+decoded_customer_file = zoho.encryption.base64DecodeToFile(customer_file,first_name + " " + last_name + " - Name Scan.pdf");
+info "Decoded Customer File: " + decoded_customer_file;
+decoded_customer_file.setparamname("file");
+upload_to_zfs = invokeurl
+[
+	url :"https://www.zohoapis.com/crm/v4/files"
+	type :POST
+	files:decoded_customer_file
+	connection:"crm_files"
+];
+info "Upload to ZFS: " + upload_to_zfs;
+fls_list = List();
+document_file_id = upload_to_zfs.getjson("data").getJson("details").getJson("id");
+fd = Map();
+fd.put("file_id",document_file_id);
+fls_list.add(fd);
+val = Map();
+val.put("AML_Scan_report",fls_list);
+inputs = Map();
+inputs.put("data",{val});
+u = invokeurl
+[
+	url :"https://www.zohoapis.com/crm/v4/AML_Compliances/" + aml_id
+	type :Put
+	parameters:inputs + ""
+	connection:"crm_files"
+];
+info "U: " + u;
