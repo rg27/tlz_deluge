@@ -1,0 +1,412 @@
+aml_details = zoho.crm.getRecordById("AML_Compliances",aml_id);
+//Get Current Zoho User
+user_details = zoho.crm.getRecordById("users",user_id);
+group_name = user_details.getjson("users").getjson("profile").getjson("name");
+info "Group Name: " + group_name;
+date_of_birth = ifnull(aml_details.get("Date_of_Birth"),"");
+gender = ifnull(aml_details.get("Gender"),"");
+info "Gender: " + gender;
+nationality = ifnull(aml_details.get("Nationality"),"");
+// country_of_residence = ifnull(aml_details.get("Country_of_Residence"),"");
+// info "Country of Residence: " + country_of_residence;
+father_name = ifnull(aml_details.get("Father_s_full_name"),"");
+//Contact Information
+local_mobile_number = ifnull(aml_details.get("Local_Mobile_No"),"");
+local_dialing_code = ifnull(aml_details.get("Dialing_Code"),"");
+email_address = ifnull(aml_details.get("Email_Address"),"");
+outside_dialing_code = ifnull(aml_details.get("Outside_UAE_Mobile_Dialing_Code"),"");
+outside_mobile_number = ifnull(aml_details.get("Outside_UAE_Mobile_No"),"");
+if(local_mobile_number == null || local_mobile_number == "")
+{
+	info "Local Mobile is Emtpy";
+	contact_number = outside_mobile_number;
+	contact_dialing_code = outside_dialing_code;
+}
+else
+{
+	info "Local Mobile is not empty";
+	contact_number = local_mobile_number;
+	contact_dialing_code = local_dialing_code;
+}
+//Profile Information
+work_type = ifnull(aml_details.get("Work_type"),"");
+if(work_type == "Homemaker")
+{
+	work_type_id = "65851988f0ea28002098f468";
+}
+if(work_type == "Retired")
+{
+	work_type_id = "65851988f0ea28002098f46b";
+}
+if(work_type == "Salaried-Executive Level")
+{
+	work_type_id = "65851988f0ea28002098f466";
+}
+if(work_type == "Salaried-General")
+{
+	work_type_id = "65851988f0ea28002098f467";
+}
+if(work_type == "Salaried-General")
+{
+	work_type_id = "65851988f0ea28002098f467";
+}
+if(work_type == "Self-Employed / Business Owner")
+{
+	work_type_id = "65851988f0ea28002098f465";
+}
+if(work_type == "Student")
+{
+	work_type_id = "65851988f0ea28002098f469";
+}
+if(work_type == "Unemployed")
+{
+	work_type_id = "65851988f0ea28002098f46a";
+}
+industry = ifnull(aml_details.get("Industry"),"");
+// if(industry.containsIgnoreCase("Public administration and defence"))
+// {
+// 	industry = "Public administration and defence; compulsory social security Real estate activities";
+// }
+// if(industry.containsIgnoreCase("sewerage, waste management"))
+// {
+// 	industry = "Water supply; sewerage, waste management";
+// }
+//Industry ID
+if(industry == "Accommodation and food service activities")
+{
+	industry_id = "65851988f0ea28002098f4ee";
+}
+if(industry == "Activities of extraterritorial organizations and bodies")
+{
+	industry_id = "65851988f0ea28002098f4fa";
+}
+if(industry == "Activities of households as employers")
+{
+	industry_id = "65851988f0ea28002098f4f9";
+}
+if(industry == "Administrative and support service activities")
+{
+	industry_id = "65851988f0ea28002098f4f3";
+}
+if(industry == "Agriculture, forestry and fishing")
+{
+	industry_id = "65851988f0ea28002098f4e6";
+}
+if(industry == "Arts, entertainment and recreation")
+{
+	industry_id = "65851988f0ea28002098f4f7";
+}
+if(industry == "Company Formation Services")
+{
+	industry_id = "65851988f0ea28002098f4fc";
+}
+if(industry == "Construction")
+{
+	industry_id = "65851988f0ea28002098f4eb";
+}
+if(industry == "Education")
+{
+	industry_id = "65851988f0ea28002098f4f5";
+}
+if(industry == "Electricity, gas, steam and air conditioning supply")
+{
+	industry_id = "65851988f0ea28002098f4e9";
+}
+if(industry == "Financial and insurance activities")
+{
+	industry_id = "65851988f0ea28002098f4f0";
+}
+if(industry == "Human health and social work activities")
+{
+	industry_id = "65851988f0ea28002098f4f6";
+}
+if(industry == "Independent accountants or auditors")
+{
+	industry_id = "65851988f0ea28002098f4fe";
+}
+if(industry == "Information and communication")
+{
+	industry_id = "65851988f0ea28002098f4ef";
+}
+if(industry == "Law Firm")
+{
+	industry_id = "65851988f0ea28002098f4fd";
+}
+if(industry == "Manufacturing")
+{
+	industry_id = "65851988f0ea28002098f4e8";
+}
+if(industry == "Money Value or Transfer Houses")
+{
+	industry_id = "65851988f0ea28002098f4fb";
+}
+if(industry == "Other service activities")
+{
+	industry_id = "65851988f0ea28002098f4f8";
+}
+if(industry == "Precious Stones or Metals")
+{
+	industry_id = "65851988f0ea28002098f4e7";
+}
+if(industry == "Professional, scientific and technical activities")
+{
+	industry_id = "65851988f0ea28002098f4f2";
+}
+if(industry.containsIgnoreCase("Public administration"))
+{
+	industry = "Public administration and defence; compulsory social security";
+	industry_id = "65851988f0ea28002098f4f4";
+}
+if(industry == "Real estate activities")
+{
+	industry_id = "65851988f0ea28002098f4f1";
+}
+if(industry == "Shipping, Aviation or Freight forwarding companies")
+{
+	industry_id = "65851988f0ea28002098f4ed";
+}
+if(industry.containsIgnoreCase("Water supply"))
+{
+	industry = "Water supply; sewerage, waste management";
+	industry_id = "65851988f0ea28002098f4ea";
+}
+if(industry.containsIgnoreCase("Wholesale and retail trade"))
+{
+	industry = "Wholesale and retail trade; repair of motor vehicles";
+	industry_id = "65851988f0ea28002098f4ec";
+}
+product_offered_to_customer = ifnull(aml_details.get("Product_offered_to_customers"),"");
+//Product_id
+productlist = List();
+if(product_offered_to_customer.containsIgnoreCase("Accountancy Services"))
+{
+	prod_id1 = {"_id":"65851988f0ea28002098f368","title":"Accountancy Services"};
+	productlist.add(prod_id1);
+}
+if(product_offered_to_customer.containsIgnoreCase("Business Formation"))
+{
+	prod_id2 = {"_id":"65851988f0ea28002098f35f","title":"Business Formation"};
+	productlist.add(prod_id2);
+}
+if(product_offered_to_customer.containsIgnoreCase("Complex Loan"))
+{
+	prod_id3 = {"_id":"65851988f0ea28002098f363","title":"Complex Loan"};
+	productlist.add(prod_id3);
+}
+if(product_offered_to_customer.containsIgnoreCase("Legal Product"))
+{
+	prod_id4 = {"_id":"65851988f0ea28002098f361","title":"Legal Product"};
+	productlist.add(prod_id4);
+}
+if(product_offered_to_customer.containsIgnoreCase("Money Transfer"))
+{
+	prod_id5 = {"_id":"65851988f0ea28002098f367","title":"Money Transfer"};
+	productlist.add(prod_id5);
+}
+if(product_offered_to_customer.containsIgnoreCase("Mortgage"))
+{
+	prod_id6 = {"_id":"65851988f0ea28002098f366","title":"Mortgage"};
+	productlist.add(prod_id6);
+}
+if(product_offered_to_customer.containsIgnoreCase("Precious Metal purchase"))
+{
+	prod_id7 = {"_id":"65851988f0ea28002098f360","title":"Precious Metal purchase"};
+	productlist.add(prod_id7);
+}
+if(product_offered_to_customer.containsIgnoreCase("Property Lease or Purchase"))
+{
+	prod_id8 = {"_id":"65851988f0ea28002098f35e","title":"Property Lease or Purchase"};
+	productlist.add(prod_id8);
+}
+if(product_offered_to_customer.containsIgnoreCase("Purchase of Goods"))
+{
+	prod_id9 = {"_id":"65851988f0ea28002098f35d","title":"Purchase of Goods"};
+	productlist.add(prod_id9);
+}
+if(product_offered_to_customer.containsIgnoreCase("Saving Product"))
+{
+	prod_id10 = {"_id":"65851988f0ea28002098f35c","title":"Saving Product"};
+	productlist.add(prod_id10);
+}
+if(product_offered_to_customer.containsIgnoreCase("Simple Loan"))
+{
+	prod_id11 = {"_id":"65851988f0ea28002098f362","title":"Simple Loan"};
+	productlist.add(prod_id11);
+}
+if(product_offered_to_customer.containsIgnoreCase("Special Purpose Vehicle"))
+{
+	prod_id12 = {"_id":"65851988f0ea28002098f365","title":"Special Purpose Vehicle"};
+	productlist.add(prod_id12);
+}
+if(product_offered_to_customer.containsIgnoreCase("Corporate Investment"))
+{
+	prod_id13 = {"_id":"65851988f0ea28002098f364","title":"Corporate Investment"};
+	productlist.add(prod_id13);
+}
+info "Product List: " + productlist;
+company_name = ifnull(aml_details.get("Company_Name"),"");
+//Address Information
+uae_address_bldg_name = ifnull(aml_details.get("UAE_Address_Building_Name"),"");
+uae_address_bldg_no = ifnull(aml_details.get("UAE_Address_Unit_No"),"");
+uae_address_street = ifnull(aml_details.get("UAE_Address_Street"),"");
+uae_address = uae_address_bldg_name + " , " + uae_address_bldg_no + " , " + uae_address_street;
+uae_address_city = ifnull(aml_details.get("UAE_Address_City"),"");
+uae_address_state = ifnull(aml_details.get("UAE_Address_State"),"");
+//Passport and Emirates ID Informations
+passport_number = ifnull(aml_details.get("Passport_Number"),"");
+passport_expiry_date = ifnull(aml_details.get("Passport_Expiry_Date"),"");
+emirates_id = ifnull(aml_details.get("Emirates_ID_No"),"");
+emirates_id_expiry = ifnull(aml_details.get("Emirates_ID_Expiry_Date"),"");
+//UAE residency status
+resident_status = ifnull(aml_details.get("Resident_status"),"");
+if(resident_status.containsIgnoreCase("GCC Resident"))
+{
+	resident_status = "Resident Expat";
+}
+if(resident_status.containsIgnoreCase("Non"))
+{
+	resident_status = "Non-resident (tourist)";
+}
+info "Resident Status: " + resident_status;
+emirates_id_no = ifnull(aml_details.get("Emirates_ID_No"),"");
+emirates_id_expiry_date = ifnull(aml_details.get("Emirates_ID_Expiry_Date"),"");
+//PEP Information
+currently_hold_any_public_position = ifnull(aml_details.get("DO_YOU_CURRENTLY_HOLD_ANY_PUBLIC_POSITION"),"");
+diplomatic_immunity = ifnull(aml_details.get("DO_YOU_HAVE_OR_HAVE_YOU_EVER_HAD_ANY_DIPLOMATIC_IM"),"");
+close_associate_hold_public_pos_in_last_twelve_months = ifnull(aml_details.get("DO_YOU_HAVE_A_CLOSE_ASSOCIATE_WHO_HAS_HELD_PUBLIC"),"");
+did_you_hold_public_pos_in_last_twelve_months = ifnull(aml_details.get("DID_YOU_HOLD_ANY_PUBLIC_POSITION_IN_THE_LAST_12_MO"),"");
+have_you_ever_held_any_public_pos = ifnull(aml_details.get("HAVE_YOU_EVER_HELD_ANY_PUBLIC_POSITION"),"");
+relative_held_public_pos = ifnull(aml_details.get("DO_YOU_HAVE_A_RELATIVE_WHO_HAS_HELD_PUBLIC_POSITIO"),"");
+if_yes_to_any_of_the_questions = ifnull(aml_details.get("IF_YOU_HAVE_ANSWERED_YES_TO_ANY_OF_THE_QUESTIONS"),"");
+has_been_a_conviction = ifnull(aml_details.get("HAS_THERE_BEEN_A_CONVICTION_AGAINST_YOU_BY_A_COUR"),"");
+url_id = ifnull(aml_details.get("URL_ID"),"");
+api_key = "c57ac48b-2409-48df-b8f0-c3871c7cda38";
+api_secret = "e39b5596521af541646cc3ae55794b6138ceaf97";
+url_login = "https://uaedirect.idenfo.com/api/users/login-endpoint";
+header_login = Map();
+// header_login.put("Content-Type","application/json");
+header_login.put("apiKey",api_key);
+header_login.put("apiSecret",api_secret);
+//login
+if(group_name.containsIgnoreCase("Administrator"))
+{
+	info "Admin Team!";
+	// 	raw = {"username":'rey@tlz.ae',"password":'P@$$word12'};
+	raw = {"username":'compliance@tlz.ae',"password":'Tlzaml@123!'};
+}
+if(group_name.containsIgnoreCase("Support Executive"))
+{
+	info "Support Team!";
+	raw = {"username":'support@tlz.ae',"password":'Tlzsup321!'};
+}
+if(group_name == "CRS on Licenses" || group_name == "Operations Manager")
+{
+	info "Renewals Team!";
+	raw = {"username":'renewals@tlz.ae',"password":'Tlzren321!'};
+}
+if(group_name.containsIgnoreCase("Business Setup Consultant") || group_name.containsIgnoreCase("Commercial Director"))
+{
+	info "Sales Team!";
+	raw = {"username":'sales@tlz.ae',"password":'Tlzsal321!'};
+}
+if(group_name == "CRS on Residence Visa")
+{
+	info "Visa Team!";
+	raw = {"username":'visas@tlz.ae',"password":'Tlzvis321!'};
+}
+if(group_name.containsIgnoreCase("General Accountant"))
+{
+	info "Finance Team!";
+	raw = {"username":'finance@tlz.ae',"password":'Tlzfin321!'};
+}
+if(group_name.notContains("General Accountant") && group_name != "CRS on Licenses" && group_name.notContains("Operations Manager") && group_name != "CRS on Residence Visa" && group_name.notContains("Business Setup Consultant") && group_name.notContains("Commercial Director") && group_name.notContains("Support Executive") && group_name.notContains("Administrator") && group_name.notContains("Operations Manager"))
+{
+	info "Ops Team!";
+	raw = {"username":'renewals@tlz.ae',"password":'Tlzren321!'};
+}
+login_res = invokeurl
+[
+	url :url_login
+	type :POST
+	parameters:raw.toString()
+	headers:header_login
+	content-type:"application/json"
+];
+access_token = login_res.getjson("data").get("accessToken");
+refresh_token = login_res.getjson("data").get("refreshToken");
+info "Access Token: " + access_token;
+// info "Refresh Token: " + refresh_token ;
+//Create Customer Header
+header_customer = Map();
+header_customer.put("apiKey",api_key);
+header_customer.put("apiSecret",api_secret);
+header_customer.put("Authorization","Bearer " + access_token);
+//Create a Customer
+url_customer = "https://uaedirect.idenfo.com/api/customers/edit-customer-endpoint";
+//Basic Informations
+basic_customer_info = Map();
+// basic_customer_info.put("firstName",full_name);
+// basic_customer_info.put("middleName","");
+// basic_customer_info.put("lastName","");
+basic_customer_info.put("fatherName",father_name);
+basic_customer_info.put("dateOfBirth",date_of_birth);
+basic_customer_info.put("nationality",nationality);
+// basic_customer_info.put("countryOfResidence",country_of_residence);
+basic_customer_info.put("gender",gender);
+basic_customer_info.put("profileType",resident_status);
+//Need to check
+//Passport Information
+passport_customer_info = Map();
+passport_customer_info.put("type","passport");
+passport_customer_info.put("passport",{"number":passport_number,"expiryDate":passport_expiry_date});
+passport_customer_info.put("number",emirates_id);
+passport_customer_info.put("expiryDate",emirates_id_expiry);
+//Contact Informations
+contact_customer_info = Map();
+contact_customer_info.put("address",uae_address);
+contact_customer_info.put("state",uae_address_state);
+contact_customer_info.put("city",uae_address_city);
+contact_customer_info.put("phoneNumber",contact_number);
+contact_customer_info.put("email",email_address);
+contact_customer_info.put("confirmEmail",email_address);
+contact_customer_info.put("isdCode",contact_dialing_code);
+//Occupation Information
+occupation_customer_info = Map();
+occupation_customer_info.put("workType",work_type);
+occupation_customer_info.put("workTypeId",work_type_id);
+occupation_customer_info.put("industry",industry);
+occupation_customer_info.put("industryId",industry_id);
+occupation_customer_info.put("companyName",company_name);
+//PEP Declarations
+pep_declaration_info = Map();
+pep_declaration_info.put("anyPublicPos",currently_hold_any_public_position);
+pep_declaration_info.put("diplomaticImmunity",diplomatic_immunity);
+pep_declaration_info.put("posLastTwoMonths",did_you_hold_public_pos_in_last_twelve_months);
+pep_declaration_info.put("closeAssociateTwelveMonths",close_associate_hold_public_pos_in_last_twelve_months);
+pep_declaration_info.put("everPublicPosition",have_you_ever_held_any_public_pos);
+pep_declaration_info.put("relativeTwelveMonths",relative_held_public_pos);
+pep_declaration_info.put("conviction",has_been_a_conviction);
+pep_declaration_info.put("other",if_yes_to_any_of_the_questions);
+//Account Info
+account_info = Map();
+account_info.put("products",productlist);
+info "Account Info: " + account_info;
+final_customer = Map();
+final_customer.put("_id",url_id);
+final_customer.put("basicInfo",basic_customer_info);
+final_customer.put("identityInfo",passport_customer_info);
+final_customer.put("contactInfo",contact_customer_info);
+final_customer.put("occupationInfo",occupation_customer_info);
+final_customer.put("pepDeclaration",pep_declaration_info);
+// final_customer.put("accountInfo",account_info);
+final_customer.put("type","individual");
+info "final_customer: " + final_customer;
+create_customer = invokeurl
+[
+	url :url_customer
+	type :PUT
+	parameters:final_customer.toString()
+	headers:header_customer
+	content-type:"application/json"
+];
+info "Update Customer: " + create_customer;
