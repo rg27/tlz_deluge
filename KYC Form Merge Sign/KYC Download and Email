@@ -1,0 +1,303 @@
+compliance_details = zoho.crm.getRecordById("AML_Compliances",compliance_id);
+compliance_number = compliance_details.get("AML_Number");
+company_name = compliance_details.get("Company_Name");
+idenfo_user = compliance_details.get("Idenfo_User");
+info "Idenfo User: " + idenfo_user;
+if(idenfo_user == "rey@tlz.ae")
+{
+	idenfo_user = "crm@tlz.ae";
+	view_recepient_idenfo_user = "Sample Group";
+}
+if(idenfo_user == "renewals@tlz.ae")
+{
+	view_recepient_idenfo_user = "Renewals Team";
+}
+if(idenfo_user == "sales@tlz.ae")
+{
+	view_recepient_idenfo_user = "Sales Team";
+}
+if(idenfo_user == "visas@tlz.ae")
+{
+	view_recepient_idenfo_user = "Visa Team";
+}
+if(idenfo_user == "finance@tlz.ae")
+{
+	view_recepient_idenfo_user = "Finance Team";
+}
+if(idenfo_user == "operations@tlz.ae")
+{
+	view_recepient_idenfo_user = "Operations Team";
+}
+title = ifnull(compliance_details.get("Title"),"");
+fname = ifnull(compliance_details.get("First_Name"),"");
+mname = ifnull(compliance_details.get("Middle_Name"),"");
+lname = ifnull(compliance_details.get("Last_Name"),"");
+full_name = fname + " " + mname + " " + lname;
+account_id = ifnull(compliance_details.get("Account_Name").get("id"),"");
+info "Account ID: " + account_id;
+//Account Details
+account_details = zoho.crm.getRecordById("Accounts",account_id);
+lead_source = ifnull(account_details.get("Lead_Source"),"");
+contact_partner_only = ifnull(account_details.get("Contact_Partner_Only"),"");
+info "Lead Source: " + lead_source;
+gender = ifnull(compliance_details.get("Gender"),"");
+nationality = ifnull(compliance_details.get("Nationality"),"");
+religion = ifnull(compliance_details.get("Religion"),"");
+cor = ifnull(compliance_details.get("Country_of_Residence"),"");
+ldc = ifnull(compliance_details.get("Dialing_Code"),"");
+lmn = ifnull(compliance_details.get("Local_Mobile_No"),"");
+outside_uae_mobile_no_code = ifnull(compliance_details.get("Outside_UAE_Mobile_Dialing_Code"),"");
+outside_uae_mobile_no = ifnull(compliance_details.get("Outside_UAE_Mobile_No"),"");
+email_address = ifnull(compliance_details.get("Email_Address"),"");
+linkedin_account = ifnull(compliance_details.get("LinkedIn_Account"),"");
+fb_account = ifnull(compliance_details.get("Facebook_Account"),"");
+work_type = ifnull(compliance_details.get("Work_type"),"");
+industry = ifnull(compliance_details.get("Industry"),"");
+products = ifnull(compliance_details.get("Product_offered_to_customers"),"");
+company_name = ifnull(compliance_details.get("Company_Name"),"");
+//UAE Address
+uae_address_bldg = ifnull(compliance_details.get("UAE_Address_Building_Name"),"");
+uae_address_unit = ifnull(compliance_details.get("UAE_Address_Unit_No"),"");
+uae_address_street = ifnull(compliance_details.get("UAE_Address_Street"),"");
+uae_address_city = ifnull(compliance_details.get("UAE_Address_City"),"");
+uae_address_state = ifnull(compliance_details.get("UAE_Address_State"),"");
+uae_address = uae_address_bldg + " " + uae_address_unit + " " + uae_address_street + " " + uae_address_city + " " + uae_address_state;
+info " UAE Address: " + uae_address;
+//Home Address
+home_address_bldg = ifnull(compliance_details.get("Home_Country_Building_Name"),"");
+home_address_unit = ifnull(compliance_details.get("Home_Country_Address_Unit_No"),"");
+home_address_street = ifnull(compliance_details.get("Home_Country_Address_Street"),"");
+home_address_city = ifnull(compliance_details.get("Home_Country_Address_City"),"");
+home_address_state = ifnull(compliance_details.get("Home_Country_Address_State"),"");
+home_address_zip = ifnull(compliance_details.get("Home_Country_Address_ZIP_CODE"),"");
+home_address_country = ifnull(compliance_details.get("Home_Country_Address_Country"),"");
+home_address = home_address_bldg + " " + home_address_unit + " " + home_address_street + " " + home_address_city + " " + home_address_state + " " + home_address_zip + " " + home_address_country;
+info "Home Address" + home_address;
+dob = ifnull(compliance_details.get("Date_of_Birth"),"");
+//Date of Birth Validation
+if(dob != null)
+{
+	dob = ifnull(compliance_details.get("Date_of_Birth").tostring("MMM dd, yyyy")," ");
+}
+else
+{
+	dob = ifnull(compliance_details.get("Date_of_Birth"),"");
+}
+//Passport Info
+passport_number = ifnull(compliance_details.get("Passport_Number"),"");
+passport_issue_date = ifnull(compliance_details.get("Passport_Issue_Date"),"");
+//Passport Issue Date Validation
+if(passport_issue_date != null)
+{
+	passport_issue_date = ifnull(compliance_details.get("Passport_Issue_Date").tostring("MMM dd, yyyy")," ");
+}
+else
+{
+	passport_issue_date = ifnull(compliance_details.get("Passport_Issue_Date"),"");
+}
+passport_expiry_date = ifnull(compliance_details.get("Passport_Expiry_Date"),"");
+//Passport Expiry Date Validation
+if(passport_expiry_date != null)
+{
+	passport_expiry_date = ifnull(compliance_details.get("Passport_Expiry_Date").tostring("MMM dd, yyyy")," ");
+}
+else
+{
+	passport_expiry_date = ifnull(compliance_details.get("Passport_Expiry_Date"),"");
+}
+passport_country_of_issue = ifnull(compliance_details.get("Country_of_Issue"),"");
+//Marital Informations
+marital_status = ifnull(compliance_details.get("Marital_Status"),"");
+spouse_nationality = ifnull(compliance_details.get("Spouse_Nationality"),"");
+spouse_fullname = ifnull(compliance_details.get("Spouse_Full_Name"),"");
+spouse_date_of_birth = ifnull(compliance_details.get("Spouse_Date_of_Birth"),"null");
+//Spouse Date of Birth Validation
+if(spouse_date_of_birth != "null")
+{
+	spouse_date_of_birth = ifnull(compliance_details.get("Spouse_Date_of_Birth").tostring("MMM dd, yyyy")," ");
+}
+else
+{
+	spouse_date_of_birth = ifnull(compliance_details.get("Spouse_Date_of_Birth"),"");
+}
+//Family Background
+mothers_fullname = ifnull(compliance_details.get("Mother_s_full_name"),"");
+mothers_nationality = ifnull(compliance_details.get("Mother_s_nationality"),"");
+mothers_contact_number = ifnull(compliance_details.get("Mother_s_contact_number"),"");
+fathers_fullname = ifnull(compliance_details.get("Father_s_full_name"),"");
+fathers_nationality = ifnull(compliance_details.get("Father_s_nationality"),"");
+fathers_contact_number = ifnull(compliance_details.get("Father_s_contact_number"),"");
+//UAE Emirates ID(If Any)
+resident_status = ifnull(compliance_details.get("Resident_status"),"");
+emirates_id_no = ifnull(compliance_details.get("Emirates_ID_No"),"");
+emirates_id_issue_date = ifnull(compliance_details.get("Emirates_ID_Issue_Date"),"null");
+//Emirates ID Issue Date Validation
+if(emirates_id_issue_date != "null")
+{
+	emirates_id_issue_date = ifnull(compliance_details.get("Emirates_ID_Issue_Date").tostring("MMM dd, yyyy")," ");
+}
+else
+{
+	emirates_id_issue_date = ifnull(compliance_details.get("Emirates_ID_Issue_Date"),"");
+}
+emirates_id_expiry_date = ifnull(compliance_details.get("Emirates_ID_Expiry_Date"),"null");
+//Emirates ID Expiry Date Validation
+if(emirates_id_expiry_date != "null")
+{
+	emirates_id_expiry_date = ifnull(compliance_details.get("Emirates_ID_Expiry_Date").tostring("MMM dd, yyyy")," ");
+}
+else
+{
+	emirates_id_expiry_date = ifnull(compliance_details.get("Emirates_ID_Expiry_Date"),"");
+}
+//PEP Information
+do_you_currently_hold_any_public_pos = ifnull(compliance_details.get("DO_YOU_CURRENTLY_HOLD_ANY_PUBLIC_POSITION"),"");
+diplomatic_immunity = ifnull(compliance_details.get("DO_YOU_HAVE_OR_HAVE_YOU_EVER_HAD_ANY_DIPLOMATIC_IM"),"");
+close_associate = ifnull(compliance_details.get("DO_YOU_HAVE_A_CLOSE_ASSOCIATE_WHO_HAS_HELD_PUBLIC"),"");
+did_you_hold_any_public = ifnull(compliance_details.get("DID_YOU_HOLD_ANY_PUBLIC_POSITION_IN_THE_LAST_12_MO"),"");
+have_you_ever_held_any_public_pos = ifnull(compliance_details.get("HAVE_YOU_EVER_HELD_ANY_PUBLIC_POSITION"),"");
+do_you_have_a_relative = ifnull(compliance_details.get("DO_YOU_HAVE_A_RELATIVE_WHO_HAS_HELD_PUBLIC_POSITIO"),"");
+has_there_been_a_conviction = ifnull(compliance_details.get("HAS_THERE_BEEN_A_CONVICTION_AGAINST_YOU_BY_A_COUR"),"");
+if_you_have_answered_yes = ifnull(compliance_details.get("IF_YOU_HAVE_ANSWERED_YES_TO_ANY_OF_THE_QUESTIONS"),"");
+InsideParam = Map();
+//Personal Details Info
+InsideParam.put("title",title);
+InsideParam.put("first_name",fname);
+InsideParam.put("middle_name",mname);
+InsideParam.put("last_name",lname);
+InsideParam.put("gender",gender);
+InsideParam.put("nationality",nationality);
+InsideParam.put("religion",religion);
+InsideParam.put("country_of_res",cor);
+//Contact Info
+InsideParam.put("email_address",email_address);
+InsideParam.put("linkedin_account",linkedin_account);
+InsideParam.put("facebook_account",fb_account);
+InsideParam.put("local_mob_no",ldc + lmn);
+InsideParam.put("abroad_no",outside_uae_mobile_no_code + outside_uae_mobile_no);
+//Profile Info
+InsideParam.put("work_type",work_type);
+InsideParam.put("industry",industry);
+InsideParam.put("products",products);
+InsideParam.put("company_name",company_name);
+//UAE Address Information
+InsideParam.put("uae_address_bldg",uae_address_bldg);
+InsideParam.put("uae_address_unit",uae_address_unit);
+InsideParam.put("uae_address_street",uae_address_street);
+InsideParam.put("uae_address_city",uae_address_city);
+InsideParam.put("uae_address_state",uae_address_state);
+//Home Countryu Address
+InsideParam.put("home_country_bldg",home_address_bldg);
+InsideParam.put("home_country_address_unit",home_address_unit);
+InsideParam.put("home_country_address_street",home_address_street);
+InsideParam.put("home_country_address_city",home_address_city);
+InsideParam.put("home_country_address_state",home_address_state);
+InsideParam.put("home_country_address_country",home_address_country);
+InsideParam.put("home_country_address_zip",home_address_zip);
+//Passport Informations
+InsideParam.put("passport_number",passport_number);
+InsideParam.put("passport_issue_date",passport_issue_date);
+InsideParam.put("passport_expiry_date",passport_expiry_date);
+InsideParam.put("dob",dob);
+InsideParam.put("country_of_issue",passport_country_of_issue);
+//Marital Informations
+InsideParam.put("marital_status",marital_status);
+InsideParam.put("spouse_full_name",spouse_fullname);
+InsideParam.put("spouse_nationality",spouse_nationality);
+InsideParam.put("spouse_date_of_birth",spouse_date_of_birth);
+//Family Background
+InsideParam.put("mothers_nationality",mothers_nationality);
+InsideParam.put("mothers_full_name",mothers_fullname);
+InsideParam.put("mothers_contact_number",mothers_contact_number);
+InsideParam.put("fathers_full_name",fathers_fullname);
+InsideParam.put("fathers_nationality",fathers_nationality);
+InsideParam.put("fathers_contact_number",fathers_contact_number);
+//UAE Emirates IF (IF Any)
+InsideParam.put("resident_status",resident_status);
+InsideParam.put("emirates_id_no",emirates_id_no);
+InsideParam.put("emirates_id_issue_date",emirates_id_issue_date);
+InsideParam.put("emirates_id_expiry_date",emirates_id_expiry_date);
+//PEP Declration
+InsideParam.put("do_you_currently_have_any_pos",do_you_currently_hold_any_public_pos);
+InsideParam.put("diplomatic_immunity",diplomatic_immunity);
+InsideParam.put("close_associate_held_pos_in_twelve_months",close_associate);
+InsideParam.put("did_you_hold_any_public_pos_in_twelve_months",did_you_hold_any_public);
+InsideParam.put("have_you_ever_held_any_public_pos",have_you_ever_held_any_public_pos);
+InsideParam.put("do_you_have_a_relative_held_public_pos",do_you_have_a_relative);
+InsideParam.put("has_there_been_a_conviction",has_there_been_a_conviction);
+InsideParam.put("if_you_have_anwered_yes",if_you_have_answered_yes);
+outsideParam = Map();
+outsideParam.put("doc_name","Compliance Document – KYC - ".concat(full_name));
+outsideParam.put("folder_id","tcp0y59b2f5e444fc40f9bddba671dbe37bd9");
+file = zoho.writer.mergeAndStore("tcp0y715f7bde221b4d4198836ac80cba9284",InsideParam,outsideParam,"writercrm");
+info "File: " + file;
+current_time = zoho.currenttime.addMinutes(2);
+trigger_time = current_time.toString("yyyy-MM-dd'T'HH:mm:ss+04:00");
+forSignature = file.getJson("document_id").toString();
+if((lead_source == "Business Partner Referrals" || lead_source == "Referral Partner Referrals") && contact_partner_only == true)
+{
+	bp_email = ifnull(account_details.get("PC_Email"),"");
+	info "BP Email: " + bp_email;
+	//publish the document to external
+	published_params = Map();
+	published_params.put("scope","external");
+	published_details = invokeurl
+	[
+		url :"https://zohoapis.com/writer/api/v1/documents/" + forSignature + "/publish"
+		type :post
+		parameters:published_params
+		connection:"writercrm2"
+	];
+	published_link = published_details.get("published_url");
+	mp = Map();
+	mp.put("KYC_Published_URL",published_link);
+	mp.put("Trigger_Time",trigger_time);
+	bp_res = zoho.crm.updateRecord("AML_Compliances",compliance_id,mp,{"trigger":{"workflow"}});
+	//Send Email with KYC Form Published URL
+	template_data = {"id":3769920000192041304};
+	email_payload = {"data":{{"from":{"email":idenfo_user},"to":{{"email":bp_email}},"bcc":{{"email":idenfo_user}},"org_email":true,"mail_format":"html","template":template_data}}};
+	// https://www.zohoapis.com/crm/v2.1/Accounts
+	url1 = "https://www.zohoapis.com/crm/v2.1/AML_Compliances/" + compliance_id + "/actions/send_mail";
+	send_to_bp_response = invokeurl
+	[
+		url :url1
+		type :POST
+		parameters:email_payload.toString()
+		connection:"send_mail"
+	];
+	info "Business Partner Res: " + send_to_bp_response;
+}
+else
+{
+	client_email = ifnull(account_details.get("PC_Email"),"");
+	info "Normal Client: " + client_email;
+	//Sign and View 
+	recepient1_map = Map();
+	recepient1_map.put("recipient_1",email_address);
+	recepient1_map.put("recipient_name",full_name);
+	recepient1_map.put("action_type","sign");
+	recepient2_map = Map();
+	recepient2_map.put("recipient_2",idenfo_user);
+	recepient2_map.put("recipient_name",view_recepient_idenfo_user);
+	recepient2_map.put("action_type","view");
+	recepient = List();
+	recepient.add(recepient1_map);
+	recepient.add(recepient2_map);
+	sub = "Compliance Document KYC".concat(" - ").concat(full_name);
+	inputMap = Map();
+	inputMap.put("subject",sub);
+	inputMap.put("reminder_period","1");
+	inputMap.put("expire_in","5");
+	inputMap.put("message","As part of our ongoing efforts to ensure regulatory compliance and maintain the integrity of our operations, we kindly request your prompt attention to the compliance document attached hereto. Your signature on this document is vital in facilitating our adherence to regulatory standards and enhancing our overall compliance framework. Your cooperation in this matter is greatly appreciated and will contribute significantly to our collective efforts in upholding industry best practices.<br><br> Please review the attached document at your earliest convenience and provide your signature where indicated. Should you have any queries or require further clarification, please do not hesitate to reach out to us at operations@tlz.ae. Thank you for your attention to this matter.");
+	sign_response = zoho.writer.signDocument(forSignature,"zohosign",recepient,"Compliance Document - KYC - " + full_name,inputMap,"sign_crm");
+	info "Sign Response: " + sign_response;
+	status_urlList = sign_response.get("sign_status_url").toList("/");
+	req_id = status_urlList.get(status_urlList.size() - 1);
+	info "Req ID: " + req_id;
+	//Update Request ID
+	req_map = Map();
+	req_map.put("Trigger_Time",trigger_time);
+	req_map.put("KYC_Form_Request_ID",req_id);
+	update_aml_res = zoho.crm.updateRecord("AML_Compliances",compliance_id,req_map,{"trigger":{"workflow"}});
+	info "Update AML Res: " + update_aml_res;
+}
