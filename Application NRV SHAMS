@@ -1,0 +1,321 @@
+let app_type = ZDK.Page.getField("Type").getValue();
+let app_stage = ZDK.Page.getField("New_Resident_Visa_Stage").getValue();
+let juris = ZDK.Page.getField("License_Jurisdiction").getValue();
+let user = ZDK.Apps.CRM.Users.fetchById($Crm.user.id);
+if (user.profile.name == 'Administrator' && user.profile.name != 'Support Executive')
+{
+    var trans = transition.name
+    log("Transition Name: " + trans)
+    // Send Visa Requirements to Client AND Remind Pending Requirements
+    if ((app_type == "New Resident Visa" && juris == "Sharjah Media City" && (trans.includes("Remind Pending Requirements") || trans.includes("Send Visa Requirements to Client"))))
+    {
+        var application_id = $Page.record_id;
+        var parameters = {};
+        var headers = {};
+        var app_details = ZDK.Apps.CRM.Applications1.fetchById(application_id);
+        var application_new_visa_form = ZDK.Apps.CRM.Connections.invoke("all_crm_modules", "https://www.zohoapis.com/crm/v2/Applications1/" + application_id + "/Applications", "GET", 1, parameters, headers);
+        var application_new_visa_form_string = JSON.stringify(application_new_visa_form);
+        log("New Visa Form: " + application_new_visa_form_string)
+
+        if (application_new_visa_form_string.includes("data") )
+        {
+            const first_name = JSON.stringify(application_new_visa_form._details.statusMessage.data[0].First_Name);
+            const last_name = JSON.stringify(application_new_visa_form._details.statusMessage.data[0].Name);
+            const email = JSON.stringify(application_new_visa_form._details.statusMessage.data[0].Email);
+            const gm_email = JSON.stringify(application_new_visa_form._details.statusMessage.data[0].General_Manager_Email);
+            const visa_service_required = JSON.stringify(application_new_visa_form._details.statusMessage.data[0].Service_Required_VISA_Type);
+            const service_required_visa_sub_type = JSON.stringify(application_new_visa_form._details.statusMessage.data[0].Service_Required_Visa_Sub_Type);
+            const business_partner = JSON.stringify(application_new_visa_form._details.statusMessage.data[0].Business_Partner);
+            const free_for_life_promotion = JSON.stringify(application_new_visa_form._details.statusMessage.data[0].Free_For_Life_Promotion_2);
+            //First Name Validation
+            if (first_name == "null" || first_name == 'null' || first_name == null)
+            {
+                var fname = " ◉ First Name";
+                var isFnameEmpty = 1; 
+            }
+            else
+            {
+                var fname = "";
+            }
+
+            //Last Name Validation
+            if (last_name == "null" || last_name == 'null' || last_name == null)
+            {
+                var lname = " ◉ Last Name";
+                var isLnameEmpty = 1;
+            }
+            else
+            {
+                var lname = "";
+            }
+
+            //Email Validation
+            if (email == "null" || email == 'null' || email == null)
+            {
+                var client_email = " ◉ Email";
+                var isClientEmailEmpty = 1;
+            }
+            else
+            {
+                var client_email = "";
+            }
+
+            //GM Email Validation
+            if (gm_email == "null" || gm_email == 'null' || gm_email == null)
+            {
+                var email_gm = " ◉ GM Email";
+                var isGmEmailEmpty = 1;
+            }
+            else
+            {
+                var email_gm = "";
+            }
+
+            //Visa Service Required Validation
+            if (visa_service_required == "null" || visa_service_required == 'null' || visa_service_required == null)
+            {
+                var visa_service = " ◉ Visa Service Required";
+                var isVisaRequiredEmpty = 1;
+            }
+            else
+            {
+                var visa_service = "";
+            }
+
+            //Service Required - Visa Sub Type Validation
+            if (service_required_visa_sub_type == "null" || service_required_visa_sub_type == 'null' || service_required_visa_sub_type == null)
+            {
+                var service_required = " ◉ Service Required - Visa Sub Type";
+                var isServiceRequiredEmpty = 1;
+            }
+            else
+            {
+                var service_required = "";
+            }
+
+            //Business Partner Validation - Null
+            if (business_partner == "null" || business_partner == 'null' || business_partner == null)
+            {
+                var bp = " ◉ Business Partner";
+                var isBPEmpty = 1;
+            }
+            else
+            {
+                var bp = "";
+            }
+
+            //Business Partner Validation - YES
+            log("Business Partner 1: " + business_partner)
+            if (business_partner.includes("Yes") || business_partner == 'Yes')
+            {
+                log("Business Partner 2: " + business_partner)
+                var bp_email_address = JSON.stringify(application_new_visa_form._details.statusMessage.data[0].BP_Email_Address);
+                log("BP Email Address: " + bp_email_address)
+                var bp_mobile = JSON.stringify(application_new_visa_form._details.statusMessage.data[0].BP_Mobile_Number);
+                log("BP Mobile Number: " + bp_mobile)
+                var bp_name = JSON.stringify(application_new_visa_form._details.statusMessage.data[0].Name_of_the_Business_Partner);
+                log("Business Partner Name: " + bp_name)
+                //Business Partner Email Address Validation
+                if (bp_email_address == "null" || bp_email_address == 'null' || bp_email_address == null)
+                {
+                    log("BP Email Address: " + bp_email_address)
+                    var bp_email = " ◉ BP Email Address";
+                    var isBPEmailEmpty = 1;
+                }
+                else
+                {
+                    var bp_email = "";
+                }
+                //Business Partner Mobile Validation
+                if (bp_mobile == "null" || bp_mobile == 'null' || bp_mobile == null)
+                {
+                    log("BP Mobile Number: " + bp_mobile)
+                    var mobile_bp = " ◉ BP Mobile Number";
+                    var isBPMobileEmpty = 1;
+                }
+                else
+                {
+                    var mobile_bp = "";
+                }
+                //Name of the Business Partner Validation
+                if (bp_name == "null" || bp_name == 'null' || bp_name == null)
+                {
+                    log("Business Partner Name: " + bp_name)
+                    var name_bp = " ◉ Name of the Business Partner";
+                    var isBPNameEmpty = 1;
+                }
+                else
+                {
+                    var name_bp = "";
+                }
+                
+            }
+            //Free for life Promotion Validation
+            if (free_for_life_promotion == "null" || free_for_life_promotion == 'null' || free_for_life_promotion == null)
+            {
+                    var ffl = " ◉ Free-For-Life Promotion?";
+                    var isFFLEmpty = 1;
+            }
+            else
+            {
+                    var ffl = "";
+            }
+
+            if (business_partner.includes("Yes") || business_partner == 'Yes')
+            {
+                if (isFnameEmpty == 1 || isLnameEmpty == 1 || isClientEmailEmpty == 1 || isGmEmailEmpty == 1 || isVisaRequiredEmpty == 1 || isServiceRequiredEmpty == 1 || isBPEmpty == 1 || isFFLEmpty == 1 || isBPEmailEmpty == 1 || isBPMobileEmpty == 1 || isBPNameEmpty == 1)
+                {
+                    let empty_fields = fname + lname + client_email + email_gm + visa_service + service_required + bp + ffl + bp_email + mobile_bp + name_bp
+                    // ZDK.Client.showMessage('Error! The following fields are empty: ' + empty_fields, { type: 'error' });
+                    ZDK.Client.showAlert('Error! The following fields are empty: ' + empty_fields);
+                    return false;
+                } 
+            }
+
+            if (business_partner.includes("No") || business_partner == 'No')
+            {
+                if (isFnameEmpty == 1 || isLnameEmpty == 1 || isClientEmailEmpty == 1 || isGmEmailEmpty == 1 || isVisaRequiredEmpty == 1 || isServiceRequiredEmpty == 1 || isBPEmpty == 1 || isFFLEmpty == 1)
+                {
+                        let empty_fields = fname + lname + client_email + email_gm + visa_service + service_required + bp + ffl
+                        // ZDK.Client.showMessage('Error! The following fields are empty: ' + empty_fields, { type: 'error' });
+                    ZDK.Client.showAlert('Error! The following fields are empty: ' + empty_fields);
+                    return false;
+                }  
+            }
+        }
+        
+    }
+    //Send Visa Application for Signing
+    if ((app_type == "New Resident Visa" && juris == "Sharjah Media City" && ( trans.includes("Send Visa Application for Signing") )))
+    {
+        var application_id = $Page.record_id;
+        var parameters = {};
+        var headers = {};
+        var app_details = ZDK.Apps.CRM.Applications1.fetchById(application_id);
+        var application_new_visa_form = ZDK.Apps.CRM.Connections.invoke("all_crm_modules", "https://www.zohoapis.com/crm/v2/Applications1/" + application_id + "/Applications", "GET", 1, parameters, headers);
+        var application_new_visa_form_string = JSON.stringify(application_new_visa_form);
+        if (application_new_visa_form_string.includes("data") )
+        {
+            var visa_sub_type = JSON.stringify(application_new_visa_form._details.statusMessage.data[0].Service_Required_Visa_Sub_Type);
+            var ffl = JSON.stringify(application_new_visa_form._details.statusMessage.data[0].Free_For_Life_Promotion_2);
+            log("Visa Sub Type: " + visa_sub_type);
+            log("FFL: " + ffl)
+            //FFl Validation
+            if ((visa_sub_type.includes("Dependent Visa") || visa_sub_type.includes("Domestic Worker Visa") || visa_sub_type.includes("Work Permit or Labour Visa") || visa_sub_type.includes("Golden Visa")) && ffl.includes("Yes"))
+            {
+                ffl_error = visa_sub_type + "  visas should not have FREE-FOR-LIFE promotion."
+                ZDK.Client.showAlert(ffl_error);
+                return false;
+            }
+
+            //Residence Visa Employment Detail Validation
+            const type_of_employment_contract = JSON.stringify(new_res_visa_form._details.statusMessage.data[0].Type_of_Employment_Contract);
+            if (type_of_employment_contract == "null" || type_of_employment_contract == 'null')
+            {
+                ZDK.Client.showMessage('Error! The [Type of Employment Contract] field is Empty!', { type: 'error' });
+                return false;
+            }
+
+            const please_specify_duration_of_contract_in_months = JSON.stringify(new_res_visa_form._details.statusMessage.data[0].please_specify_duration_of_contract_in_months);
+            if (please_specify_duration_of_contract_in_months == "null" || please_specify_duration_of_contract_in_months == 'null')
+            {
+                ZDK.Client.showMessage('Error! The [Please specify duration of contract in months] field is Empty!', { type: 'error' });
+                return false;
+            }
+
+            const start_date = JSON.stringify(new_res_visa_form._details.statusMessage.data[0].Start_Date);
+            if (start_date == "null" || start_date == 'null')
+            {
+                ZDK.Client.showMessage('Error! The [Start Date] field is Empty!', { type: 'error' });
+                return false;
+            }
+
+            const education_qualifications = JSON.stringify(new_res_visa_form._details.statusMessage.data[0].Education_Qualifications);
+            log("Educational Qualifications: " + education_qualifications)
+            if (education_qualifications == "null" || education_qualifications == 'null')
+            {
+                ZDK.Client.showMessage('Error! The [Educational Qualifications] field is Empty!', { type: 'error' });
+                return false;
+            }
+        }
+    }
+    //E-Visa Sent to the client
+    if ((app_type == "New Resident Visa" && juris == "Sharjah Media City" && ( trans.includes("Send E-VISA to the client") )))
+    {
+        var application_id = $Page.record_id;
+        var parameters = {};
+        var headers = {};
+        var app_details = ZDK.Apps.CRM.Applications1.fetchById(application_id);
+        var e_visa_link = JSON.stringify(app_details._E_Visa_Link)
+        if (e_visa_link == null || e_visa_link == "null")
+        {
+            ZDK.Client.showAlert('Error! Please upload the *E-Visa* file and make sure that the keyword *E-Visa* appears in the file name.');
+            return false;
+        }
+    }
+    //Visa Status Change/Entry Stamp is Complete
+    if ((app_type == "New Resident Visa" && juris == "Sharjah Media City" && ( trans.includes("Visa Status Change/Entry Stamp") )))
+    {
+        var application_id = $Page.record_id;
+        var parameters = {};
+        var headers = {};
+        var app_details = ZDK.Apps.CRM.Applications1.fetchById(application_id);
+        var change_status_entry_stamp_link = JSON.stringify(app_details._Status_Change_Link)
+        if (change_status_entry_stamp_link == null || change_status_entry_stamp_link == "null")
+        {
+            ZDK.Client.showAlert('Error! Please upload the *Change Status* or *Entry Stamp* file and make sure that the keywords *Change Status* or *Entry Stamp* appears in the file name.');
+            return false;
+        }
+    }
+    //Notify Medical Test Schedule to Visa
+    if ((app_type == "New Resident Visa" && juris == "Sharjah Media City" && ( trans.includes("Notify Medical Test Schedule to Visa") )))
+    {
+        var application_id = $Page.record_id;
+        var parameters = {};
+        var headers = {};
+        var app_details = ZDK.Apps.CRM.Applications1.fetchById(application_id);
+        var medical_test_form_link = JSON.stringify(app_details._Medical_Test_Form_Link)
+        var passport_link = JSON.stringify(app_details._Passport_Link)
+    
+        if (medical_test_form_link == null || medical_test_form_link == "null")
+        {
+            ZDK.Client.showAlert('Error! Please upload the *Medical Test Form* file and make sure that the keywords *Medical Test Form* appears in the file name.');
+            return false;
+        }
+
+            if (passport_link == null || passport_link == "null")
+        {
+            ZDK.Client.showAlert('Error! Please upload the *Passport* file and make sure that the keyword *Passport* appears in the file name.');
+            return false;
+        }
+    }
+    //Send Medical Test Result to Authority and Create RV Record
+    if (app_type == "New Resident Visa" && juris == "Sharjah Media City" &&  (trans.includes("Send Medical Test Result to Authority") || trans.includes("Create RV Record")))
+    {
+        var application_id = $Page.record_id;
+        var parameters = {};
+        var headers = {};
+        var app_details = ZDK.Apps.CRM.Applications1.fetchById(application_id);
+        var result_of_the_medical_test_form_link = JSON.stringify(app_details._Result_of_the_medical_test_form_Link)
+        if (result_of_the_medical_test_form_link == null || result_of_the_medical_test_form_link == "null")
+        {
+            ZDK.Client.showAlert('Error! Please upload the *Medical Test Result* file and make sure that the keywords *Medical Result* appears in the file name.');
+            return false;
+        }
+    }
+    //Notify Emirates ID Biometric Schedule
+    if ((app_type == "New Resident Visa" && juris == "Sharjah Media City" &&  trans.includes("Notify Emirates ID Biometric Schedule") ))
+    {
+        var application_id = $Page.record_id;
+        var parameters = {};
+        var headers = {};
+        var app_details = ZDK.Apps.CRM.Applications1.fetchById(application_id);
+        var emirates_id_reg_form_link = JSON.stringify(app_details._Emirates_ID_Registration_Form_Link)
+    
+        if (emirates_id_reg_form_link == null || emirates_id_reg_form_link == "null")
+        {
+            ZDK.Client.showAlert('Error! Please upload the *Emirates ID Registration Form* file and make sure that the keywords *EID Form* appears in the file name.');
+            return false;
+        }
+    }
+}
