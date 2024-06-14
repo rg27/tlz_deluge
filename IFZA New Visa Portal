@@ -1,0 +1,455 @@
+application_details = zoho.crm.getRecordById("Applications1",application_id);
+owner_id = application_details.get("Owner").get("id");
+info "Owner ID: " + owner_id;
+user_details = zoho.crm.getRecordById("users",owner_id);
+info "User Details: " + user_details;
+owner_fname = user_details.getjson("users").getjson("first_name");
+owner_lname = user_details.getjson("users").getjson("last_name");
+info application_details;
+visa_application_details = zoho.crm.getRelatedRecords("Applications","Applications1",application_id);
+info visa_application_details;
+//
+//GM Infos
+gm_name = ifnull(visa_application_details.getjson("General_Manager_Name"),"");
+gm_email = ifnull(visa_application_details.getjson("General_Manager_Email"),"");
+payment_method = "Bank Transfer";
+application_owner = ifnull(application_details.get("Owner").get("name"),"");
+//Name in English
+salutation = ifnull(visa_application_details.getJson("Salutation"),"");
+fname = ifnull(visa_application_details.getJson("First_Name"),"");
+lname = ifnull(visa_application_details.getJson("Name"),"");
+mname = ifnull(visa_application_details.getJson("Middle_Name"),"");
+nation = ifnull(visa_application_details.getJson("Nationality"),"");
+//
+//UAE Address(if applicable)
+uae_address_line = ifnull(visa_application_details.getJson("Address"),"");
+if(uae_address_line.containsIgnoreCase("#"))
+{
+	uae_address_line = replaceAll(uae_address_line,"#","%23");
+}
+if(uae_address_line.containsIgnoreCase("&"))
+{
+	uae_address_line = replaceAll(uae_address_line,"&","%26");
+}
+city = ifnull(visa_application_details.getJson("City"),"");
+if(city.containsIgnoreCase("#"))
+{
+	city = replaceAll(city,"#","%23");
+}
+if(city.containsIgnoreCase("&"))
+{
+	city = replaceAll(city,"&","%26");
+}
+state = ifnull(visa_application_details.getJson("State"),"");
+country = ifnull(visa_application_details.getJson("Country1"),"");
+//
+//Home Country Address
+uae_address_line2 = ifnull(visa_application_details.getJson("Address2"),"");
+if(uae_address_line2.containsIgnoreCase("#"))
+{
+	uae_address_line2 = replaceAll(uae_address_line2,"#","%23");
+}
+if(uae_address_line2.containsIgnoreCase("&"))
+{
+	uae_address_line2 = replaceAll(uae_address_line2,"&","%26");
+}
+city2 = ifnull(visa_application_details.getJson("City2"),"");
+if(city2.containsIgnoreCase("#"))
+{
+	city2 = replaceAll(city2,"#","%23");
+}
+if(city2.containsIgnoreCase("&"))
+{
+	city2 = replaceAll(city2,"&","%26");
+}
+state2 = ifnull(visa_application_details.getJson("State2"),"");
+country2 = ifnull(visa_application_details.getJson("Country2"),"");
+//
+//page1
+visa_type = ifnull(visa_application_details.getJson("Service_Required_VISA_Type"),"");
+do_you_have_emirates_id = ifnull(visa_application_details.getJson("Do_you_have_emirates_ID"),"");
+if_yes_eid_number = ifnull(visa_application_details.getJson("If_Yes_please_provide_EID_Number1"),"");
+//
+//Expiry Date Validation
+if(visa_application_details.getJson("EID_Expiry_Date1") != null)
+{
+	eid_expiry_date = ifnull(visa_application_details.getJson("EID_Expiry_Date1").toString("dd/MM/yyyy"),"");
+}
+else
+{
+	eid_expiry_date = ifnull(visa_application_details.getJson("EID_Expiry_Date1"),"");
+}
+va_whatsapp = ifnull(application_details.get("VA_WhatsApp_No")," ");
+application_agent = "TRADE LICENSE ZONE";
+email = ifnull(application_details.get("Email")," ");
+visa_status = ifnull(visa_application_details.getJson("Service_Required_Current_Visa_Status")," ");
+//
+//visa valid until validations
+if(visa_application_details.getJson("Visa_Valid_Until") != null)
+{
+	visa_valid_until = ifnull(visa_application_details.getJson("Visa_Valid_Until").toString("dd/MM/yyyy")," ");
+}
+else
+{
+	visa_valid_until = ifnull(visa_application_details.getJson("Visa_Valid_Until")," ");
+}
+//
+//Page3
+nationality_read_only = ifnull(visa_application_details.getJson("Nationality")," ");
+passport_number = ifnull(visa_application_details.getJson("Passport_Number")," ");
+issue_city = ifnull(visa_application_details.getJson("Issue_City")," ");
+issue_country = ifnull(visa_application_details.getJson("Issue_Country")," ");
+//
+//Passport Issue Date Validation
+if(visa_application_details.getJson("Passport_Issue_Date") != null)
+{
+	passport_issue_date = ifnull(visa_application_details.getJson("Passport_Issue_Date").toString("dd/MM/yyyy")," ");
+}
+else
+{
+	passport_issue_date = ifnull(visa_application_details.getJson("Passport_Issue_Date")," ");
+}
+//
+//Passport Expiry Date Validation
+if(visa_application_details.getJson("Passport_Expiry_Date") != null)
+{
+	passport_expiry_date = ifnull(visa_application_details.getJson("Passport_Expiry_Date").toString("dd/MM/yyyy")," ");
+}
+else
+{
+	passport_expiry_date = ifnull(visa_application_details.getJson("Passport_Expiry_Date")," ");
+}
+city_of_birth = ifnull(visa_application_details.getJson("City_of_Birth")," ");
+country_of_birth = ifnull(visa_application_details.getJson("Country_of_Birth")," ");
+//
+//Date of Birth Validation
+if(visa_application_details.getJson("Date_of_Birth") != null)
+{
+	date_of_birth = ifnull(visa_application_details.getJson("Date_of_Birth").toString("dd/MM/yyyy")," ");
+}
+else
+{
+	date_of_birth = ifnull(visa_application_details.getJson("Date_of_Birth")," ");
+}
+gender = ifnull(visa_application_details.getJson("Gender")," ");
+pre_nationality = ifnull(visa_application_details.getJson("Previous_Nationality")," ");
+marital_status = ifnull(visa_application_details.getJson("Marital_Status")," ");
+religion = ifnull(visa_application_details.getJson("Religion")," ");
+father = ifnull(visa_application_details.getJson("Father_s_Full_Name")," ");
+mother = ifnull(visa_application_details.getJson("Mother_s_Full_Name")," ");
+//
+//Gender Validation
+if(gender.startsWith("m") || gender.startsWith("M"))
+{
+	gender1 = "Male";
+}
+else if(gender.startsWith("F") || gender.startsWith("f"))
+{
+	gender1 = "Female";
+}
+else
+{
+	gender1 = " ";
+}
+//
+//Visa Application Type Validation
+visa_app = ifnull(application_details.get("Service_Required_Visa_Application_Type"),"");
+if(visa_app.containsIgnoreCase("Out"))
+{
+	visa_application_type = "Out of Country";
+	//pending
+	outside_country_visa_declaration = true;
+}
+else if(visa_app.containsIgnoreCase("In"))
+{
+	visa_application_type = "In-Country";
+	//pending  
+	outside_country_visa_declaration = false;
+}
+else
+{
+	visa_application_type = " ";
+	outside_country_visa_declaration = " ";
+}
+//
+//Marital Status Validation
+if(marital_status.startsWith("s") || marital_status.startsWith("S"))
+{
+	marital = "Single";
+}
+else if(marital_status.startsWith("d") || marital_status.startsWith("D"))
+{
+	marital = "Divorced";
+}
+else if(marital_status.startsWith("m") || marital_status.startsWith("M"))
+{
+	marital = "Married";
+}
+else
+{
+	marital = "";
+}
+//
+//Religion Validation
+if(religion.startsWith("i") || religion.startsWith("I") || religion.startsWith("m") || religion.startsWith("M"))
+{
+	rel = "Islam";
+}
+else if(religion.startsWith("c") || religion.startsWith("C"))
+{
+	rel = "Christianity";
+}
+else if(religion.startsWith("h") || religion.startsWith("h"))
+{
+	rel = "Hinduism";
+}
+else if(religion.startsWith("b") || religion.startsWith("B"))
+{
+	rel = "Buddhism";
+}
+else if(religion.startsWith("s") || religion.startsWith("S"))
+{
+	rel = "Sukhism";
+}
+else if(religion.startsWith("j") || religion.startsWith("J"))
+{
+	rel = "Judaism";
+}
+else
+{
+	rel = "Other";
+}
+//
+//Page4 - Employment Details
+type_of_employment = ifnull(visa_application_details.getJson("Type_of_Employment_Contract")," ");
+duration_contract_in_months = ifnull(visa_application_details.getJson("please_specify_duration_of_contract_in_months")," ");
+job_title = ifnull(visa_application_details.getJson("Job_Title")," ");
+if(job_title == "Administrative Director (Attested Degree Required - see note 1)")
+{
+	final_jt = "Administrative%20Director%20%28Attested%20Degree%20Required%20-%20see%20note%201%29";
+}
+else if(job_title == "Assistant Manager (Attested Degree Required - see note 1)")
+{
+	final_jt = "Assistant%20Manager%20%28Attested%20Degree%20Required%20-%20see%20note%201%29";
+}
+else if(job_title == "Assistant Managing Director(Attested Degree Required - see note 1)")
+{
+	final_jt = "Assistant%20Managing%20Director%28Attested%20Degree%20Required%20-%20see%20note%201%29";
+}
+else if(job_title == "HR Director (Attested Degree Required - see note 1)")
+{
+	final_jt = "HR%20Director%20%28Attested%20Degree%20Required%20-%20see%20note%201%29";
+}
+else if(job_title == "HR Manager (Attested Degree Required - see note 1)")
+{
+	final_jt = "HR%20Manager%20%28Attested%20Degree%20Required%20-%20see%20note%201%29";
+}
+else if(job_title == "Investor (Minimum share capital greater than 48,000 AED - see note 4)")
+{
+	final_jt = "Investor%20%28Minimum%20share%20capital%20greater%20than%2048%2C000%20AED%20-%20see%20note%204%29";
+}
+else if(job_title == "Managing Director (Attested Degree Required - see note 1)")
+{
+	final_jt = "Managing%20Director%20%28Attested%20Degree%20Required%20-%20see%20note%201%29";
+}
+else if(job_title == "Marketing Director (Attested Degree Required - see note 1)")
+{
+	final_jt = "Marketing%20Director%20%28Attested%20Degree%20Required%20-%20see%20note%201%29";
+}
+else if(job_title == "Marketing Director (Attested Degree Required - see note 1)")
+{
+	final_jt = "Marketing%20Director%20%28Attested%20Degree%20Required%20-%20see%20note%201%29";
+}
+else if(job_title == "Office Manager (Attested Degree Required - see note 1)")
+{
+	final_jt = "Office%20Manager%20%28Attested%20Degree%20Required%20-%20see%20note%201%29";
+}
+else
+{
+	final_jt = job_title;
+}
+//
+//Start Date Validations
+if(visa_application_details.getJson("Start_Date") != null)
+{
+	start_date = ifnull(visa_application_details.getJson("Start_Date").toString("dd/MM/yyyy")," ");
+}
+else
+{
+	start_date = ifnull(visa_application_details.getJson("Start_Date")," ");
+}
+prob_period = ifnull(visa_application_details.getJson("Probation_Period_0_6_months")," ");
+if(prob_period == "0")
+{
+	prob = "0 Months";
+}
+else if(prob_period == "1" || prob_period == "01")
+{
+	prob = "1 Month";
+}
+else if(prob_period == "2" || prob_period == "02")
+{
+	prob = "2 Months";
+}
+else if(prob_period == "3" || prob_period == "03")
+{
+	prob = "3 Months";
+}
+else if(prob_period == "4" || prob_period == "04")
+{
+	prob = "4 Months";
+}
+else if(prob_period == "5" || prob_period == "05")
+{
+	prob = "5 Months";
+}
+else if(prob_period == "6" || prob_period == "06")
+{
+	prob = "6 Months";
+}
+else
+{
+	prob = " ";
+}
+termination = ifnull(visa_application_details.getJson("Termination_Notice_1_3_months")," ");
+if(termination == "1" || termination == "01")
+{
+	term = "1 Month";
+}
+else if(termination == "2" || termination == "02")
+{
+	term = "2 Months";
+}
+else if(termination == "3" || termination == "03")
+{
+	term = "3 Months";
+}
+else
+{
+	term = " ";
+}
+ed_quali = ifnull(visa_application_details.getJson("Education_Qualifications")," ");
+if(ed_quali.startsWith("n") || ed_quali.startsWith("N"))
+{
+	ed = "No Formal Education";
+}
+else if(ed_quali.startsWith("h") || ed_quali.startsWith("H"))
+{
+	ed = "High School";
+}
+else if(ed_quali.startsWith("p") || ed_quali.startsWith("P"))
+{
+	ed = "Primary";
+}
+else if(ed_quali.startsWith("v") || ed_quali.startsWith("V"))
+{
+	ed = "Vocational";
+}
+else if(ed_quali.startsWith("b") || ed_quali.startsWith("B"))
+{
+	ed = "Bachelor's degree";
+}
+else if(ed_quali.startsWith("b") || ed_quali.startsWith("B"))
+{
+	ed = "Bachelor's degree";
+}
+else if(ed_quali.startsWith("m") || ed_quali.startsWith("M"))
+{
+	ed = "Master's degree";
+}
+else if(ed_quali.startsWith("d") || ed_quali.startsWith("D"))
+{
+	ed = "Doctorate";
+}
+else
+{
+	ed = " ";
+}
+rte = ifnull(visa_application_details.getJson("Return_Ticket_Eligibility_Economy_Business_or_Fi")," ");
+if(rte.startsWith("E") || rte.startsWith("e"))
+{
+	rte_bi_fi = "Economy";
+}
+else if(rte.startsWith("B") || rte.startsWith("b"))
+{
+	rte_bi_fi = "Business";
+}
+else if(rte.startsWith("F") || rte.startsWith("f"))
+{
+	rte_bi_fi = "First Class";
+}
+else if(rte.startsWith("N") || rte.startsWith("n"))
+{
+	rte_bi_fi = "No Entitlement";
+}
+else
+{
+	rte_bi_fi = " ";
+}
+tep = ifnull(visa_application_details.getJson("Ticket_Entitlement_Period_None_1_or_2_Years")," ");
+if(tep.contains("1"))
+{
+	ticket = "1 Year";
+}
+else if(tep.contains("2"))
+{
+	ticket = "2 Years";
+}
+alt = ifnull(visa_application_details.getJson("Annual_Leave_Entitlement")," ");
+if(alt.startsWith("W"))
+{
+	annual = "Working Days";
+}
+else if(alt.startsWith("C"))
+{
+	annual = "Calendar Days";
+}
+else
+{
+	rte_bi_fi = " ";
+}
+leave_duration = ifnull(visa_application_details.getJson("If_Working_Days_please_specify_leave_duration")," ");
+//
+//Salary Breakdown
+basic = ifnull(visa_application_details.getJson("Basic_Salary_AED")," ");
+transpo = ifnull(visa_application_details.getJson("Transportation_Allowance_AED")," ");
+accomodation = ifnull(visa_application_details.getJson("Accomodation_Allowance_AED")," ");
+other_allowance = ifnull(visa_application_details.getJson("Other_Allowance_AED")," ");
+total_salary = ifnull(visa_application_details.getJson("Total_Monthly_Salary_AED")," ");
+//
+//Company Details
+company = ifnull(visa_application_details.getJson("Company")," ");
+tln = ifnull(visa_application_details.getJson("Trade_License_Number")," ");
+ecn = ifnull(visa_application_details.getJson("Establishment_Card_Number")," ");
+sub = ifnull(visa_application_details.getJson("If_Islam_please_indicate_subcategory")," ");
+//
+//sub category validations
+if(visa_application_details.getJson("If_Islam_please_indicate_subcategory") != null)
+{
+	if(visa_application_details.getJson("If_Islam_please_indicate_subcategory").containsIgnoreCase("Sunni"))
+	{
+		subcat = "Sunni";
+	}
+	else if(visa_application_details.getJson("If_Islam_please_indicate_subcategory").containsIgnoreCase("Shia"))
+	{
+		subcat = "Shia";
+	}
+	else
+	{
+		subcat = " ";
+	}
+}
+else
+{
+}
+if(visa_application_details.getJson("Free_For_Life_Promotion") == true)
+{
+	code = "VISAFORLIFE2021";
+}
+else
+{
+}
+//old
+res = openurl("https://forms.zohopublic.com/ifzafjr/form/VisaApplicationFormIFZA1/formperma/002Gq71nWMAvN2X0ADwN9YAr_dvXi7aR0MSq5nOdoz8?SingleLine=" + application_agent + "&Email2=visas@tlz.ae" + "&Name2_Salutation=" + salutation + "&Name2_First=" + fname + "&Name2_Last=" + lname + "&Name2_Middle=" + mname + "&Email3=" + email + "&PhoneNumber3=" + va_whatsapp + "&Address1_AddressLine1=" + uae_address_line + "&Address1_City=" + city + "&Address1_Region=" + state + "&Address1_Country=" + country + "&Address2_AddressLine1=" + uae_address_line2 + "&Address2_City=" + city2 + "&Address2_Region=" + state2 + "&Address2_Country=" + country2 + "&Dropdown1=" + do_you_have_emirates_id + "&SingleLine2=" + if_yes_eid_number + "&Date10=" + eid_expiry_date + "&Dropdown5=" + visa_type + "&Dropdown21=" + nation + "&Dropdown=" + visa_application_type + "&SingleLine6=1169-2791" + "&Dropdown8=" + visa_status + "&Date9=" + visa_valid_until + "&Dropdown9=" + nationality_read_only + "&SingleLine4=" + passport_number + "&SingleLine7=" + issue_city + "&Dropdown19=Ordinary" + "&Dropdown10=" + issue_country + "&Date11=" + passport_issue_date + "&Date12=" + passport_expiry_date + "&SingleLine10=" + city_of_birth + "&Dropdown11=" + country_of_birth + "&Date13=" + date_of_birth + "&Dropdown12=" + gender1 + "&SingleLine11=" + pre_nationality + "&Dropdown13=" + marital + "&Dropdown3=" + rel + "&SingleLine13=" + father + "&SingleLine14=" + mother + "&Dropdown17=" + type_of_employment + "&SingleLine15=" + duration_contract_in_months + "&Dropdown18=" + final_jt + "&Date14=" + start_date + "&Dropdown20=" + prob + "&Dropdown22=" + term + "&Dropdown7=" + ed + "&Dropdown23=" + rte_bi_fi + "&Dropdown24=" + ticket + "&Dropdown6=" + annual + "&Decimal1=" + leave_duration + "&Decimal=" + leave_duration + "&Currency=" + basic + "&Currency1=" + transpo + "&Currency2=" + accomodation + "&Currency3=" + other_allowance + "&Formula=" + total_salary + "&SingleLine9=" + company + "&SingleLine3=" + tln + "&SingleLine17=" + ecn + "&Dropdown16=" + subcat + "&Dropdown4=" + code + "&SingleLine8=" + gm_name + "&Email=" + gm_email + "&Dropdown14=" + payment_method + "&Name1_First=" + owner_fname + "&Name1_Last=" + owner_lname,"new window");
+info res;
+return "Information redirected to IFZA New Visa Application Portal";
