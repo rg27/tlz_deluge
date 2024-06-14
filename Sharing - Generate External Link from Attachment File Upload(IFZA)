@@ -1,0 +1,579 @@
+main_app_details = zoho.crm.getRecordById("Applications1",application_id);
+//Auth Details
+url1 = "https://accounts.zoho.com/oauth/v2/token";
+header_data1 = Map();
+header_data1.put("Content-Type","application/x-www-form-urlencoded");
+payloadMap2 = Map();
+payloadMap2.put("refresh_token","1000.0faa668be743124cbeda4bfde8e39980.e04c11963ae4d8562193b6f4f4333ae2");
+payloadMap2.put("redirect_url","http://example.com/yourcallback");
+payloadMap2.put("client_id","1000.HLTT3CUSEPMVW9J66LUOTO977Y69XZ");
+payloadMap2.put("client_secret","f59b88f178e0704f86dcea0b6090c902c750048666");
+payloadMap2.put("grant_type","refresh_token");
+response2 = invokeurl
+[
+	url :url1
+	type :POST
+	parameters:payloadMap2
+	headers:header_data1
+];
+info response2;
+url2 = "https://www.zohoapis.com/crm/v3/Leads";
+c_type = "Zoho-oauthtoken " + response2.get("access_token");
+info c_type;
+header_data2 = Map();
+header_data2.put("Content-Type","application/x-www-form-urlencoded");
+header_data2.put("Accept","application/vnd.api+json");
+header_data2.put("Authorization",c_type);
+//End of Auth Details
+stages = ifnull(main_app_details.get("New_Resident_Visa_Stage"),"");
+app_details = zoho.crm.getRelatedRecords("Attachments","Applications1",application_id);
+attachments_field_details = ifnull(main_app_details.get("Attachment"),"");
+result_medical = ifnull(main_app_details.get("Result_of_the_medical_test_form_Link"),"");
+// info "Main App Details: " + app_details
+if(attachments_field_details != null && attachments_field_details != "")
+{
+	for each  app_detail in app_details
+	{
+		link_url = app_detail.getjson("$link_url");
+		info "Link URL: " + link_url;
+		if(link_url != null)
+		{
+			parent_id = link_url.getSuffixIgnoreCase('folders/');
+			info "Parent ID:" + parent_id;
+		}
+	}
+	info "Attachment Details: " + attachments_field_details;
+	updatelist = List();
+	for each  app_detail_2 in attachments_field_details
+	{
+		file_name = app_detail_2.getjson("file_Name");
+		info "File Name: " + file_name;
+		//First
+		if(file_name.containsIgnoreCase("Employment Contract") && stages.containsIgnoreCase("Applied in Authority Portal"))
+		{
+			file_id_1 = app_detail_2.getjson("file_Id");
+			attachment_id_1 = app_detail_2.getjson("attachment_Id");
+			info "Attachment ID:" + attachment_id_1;
+			extn_1 = file_name.getSuffixIgnoreCase('.');
+			download_response_1 = invokeurl
+			[
+				url :"https://www.zohoapis.com/crm/v4/files?id=" + file_id_1
+				type :GET
+				connection:"crm_file_upload"
+			];
+			info "Download Response 1: " + download_response_1;
+			file_name_1 = file_name.getPrefix(".");
+			//Upload the file in Workdrive 1
+			header_1 = Map();
+			header_1.put("Accept","application/vnd.api+json");
+			list_of_text_1 = List();
+			list_of_text_1.add({"paramName":"filename","content":file_name_1.concat(".").concat(extn_1),"stringPart":"true"});
+			list_of_text_1.add({"paramName":"parent_id","content":parent_id,"stringPart":"true"});
+			list_of_text_1.add({"paramName":"override-name-exist","content":"true","stringPart":"true"});
+			list_of_text_1.add({"paramName":"content","content":download_response_1,"stringPart":"false"});
+			upload_response_1 = invokeurl
+			[
+				url :"https://www.zohoapis.com/workdrive/api/v1/upload"
+				type :POST
+				headers:header_1
+				files:list_of_text_1
+				connection:"wd_files"
+			];
+			// 			info "Upload Response 1: " + upload_response_1;
+			resource_id_1 = upload_response_1.getjson("data").getjson("attributes").getjson("resource_id");
+			info "Resource ID: " + resource_id_1;
+			//Generate the external link 1
+			data = Map();
+			data_param1 = Map();
+			att_param1 = Map();
+			att_param1.put("resource_id",resource_id_1);
+			att_param1.put("shared_type","everyone");
+			att_param1.put("role_id","34");
+			data_param1.put("attributes",att_param1);
+			data_param1.put("type","permissions");
+			data.put("data",data_param1);
+			generate_external_response_1 = invokeurl
+			[
+				url :"https://www.zohoapis.com/workdrive/api/v1/permissions"
+				type :POST
+				parameters:data.toString()
+				headers:header_data2
+			];
+			info "Generate External Response: " + generate_external_response_1;
+			external_url_1 = generate_external_response_1.getjson("data").getjson("attributes").getjson("permalink");
+			info "Permalink: " + external_url_1;
+			//End of External Link 1
+			mp2 = Map();
+			mp2.put("Signed_Employment_Contract_Link",external_url_1);
+			update_app_res = zoho.crm.updateRecord("Applications1",application_id,mp2);
+			info "Update Application Res:" + update_app_res;
+		}
+		//Second
+		if(file_name.containsIgnoreCase("E-Visa") && stages.containsIgnoreCase("Employment Contract Signed By Client"))
+		{
+			file_id_1 = app_detail_2.getjson("file_Id");
+			attachment_id_1 = app_detail_2.getjson("attachment_Id");
+			info "Attachment ID:" + attachment_id_1;
+			extn_1 = file_name.getSuffixIgnoreCase('.');
+			// 		info "EXTN: " + extn_1 ;
+			download_response_1 = invokeurl
+			[
+				url :"https://www.zohoapis.com/crm/v4/files?id=" + file_id_1
+				type :GET
+				connection:"crm_file_upload"
+			];
+			info "Download Response 1: " + download_response_1;
+			file_name_1 = file_name.getPrefix(".");
+			//Upload the file in Workdrive
+			header_1 = Map();
+			header_1.put("Accept","application/vnd.api+json");
+			list_of_text_1 = List();
+			list_of_text_1.add({"paramName":"filename","content":file_name_1.concat(".").concat(extn_1),"stringPart":"true"});
+			list_of_text_1.add({"paramName":"parent_id","content":parent_id,"stringPart":"true"});
+			list_of_text_1.add({"paramName":"override-name-exist","content":"true","stringPart":"true"});
+			list_of_text_1.add({"paramName":"content","content":download_response_1,"stringPart":"false"});
+			upload_response_1 = invokeurl
+			[
+				url :"https://www.zohoapis.com/workdrive/api/v1/upload"
+				type :POST
+				headers:header_1
+				files:list_of_text_1
+				connection:"wd_files"
+			];
+			info "Upload Response 1: " + upload_response_1;
+			resource_id_1 = upload_response_1.getjson("data").getjson("attributes").getjson("resource_id");
+			//Generate the external link 2
+			data = Map();
+			data_param1 = Map();
+			att_param1 = Map();
+			att_param1.put("resource_id",resource_id_1);
+			att_param1.put("shared_type","everyone");
+			att_param1.put("role_id","34");
+			data_param1.put("attributes",att_param1);
+			data_param1.put("type","permissions");
+			data.put("data",data_param1);
+			generate_external_response_1 = invokeurl
+			[
+				url :"https://www.zohoapis.com/workdrive/api/v1/permissions"
+				type :POST
+				parameters:data.toString()
+				headers:header_data2
+			];
+			info "Generate External Response: " + generate_external_response_1;
+			external_url_1 = generate_external_response_1.getjson("data").getjson("attributes").getjson("permalink");
+			//End of Generating the External Link 2
+			mp2 = Map();
+			mp2.put("E_Visa_Link",external_url_1);
+			update_app_res = zoho.crm.updateRecord("Applications1",application_id,mp2);
+			info "Update Application Res:" + update_app_res;
+		}
+		//Third
+		if((file_name.containsIgnoreCase("Change Status") || file_name.containsIgnoreCase("Entry Stamp")) && (stages.containsIgnoreCase("Send E-VISA to the client") || stages.containsIgnoreCase("E-VISA sent to the client")))
+		{
+			file_id_1 = app_detail_2.getjson("file_Id");
+			attachment_id_1 = app_detail_2.getjson("attachment_Id");
+			info "Attachment ID:" + attachment_id_1;
+			// 		info "File ID: " + file_id_1 ;
+			extn_1 = file_name.getSuffixIgnoreCase('.');
+			// 		info "EXTN: " + extn_1 ;
+			download_response_1 = invokeurl
+			[
+				url :"https://www.zohoapis.com/crm/v4/files?id=" + file_id_1
+				type :GET
+				connection:"crm_file_upload"
+			];
+			info "Download Response 1: " + download_response_1;
+			file_name_1 = file_name.getPrefix(".");
+			//Upload the file in Workdrive
+			header_1 = Map();
+			header_1.put("Accept","application/vnd.api+json");
+			list_of_text_1 = List();
+			list_of_text_1.add({"paramName":"filename","content":file_name_1.concat(".").concat(extn_1),"stringPart":"true"});
+			list_of_text_1.add({"paramName":"parent_id","content":parent_id,"stringPart":"true"});
+			list_of_text_1.add({"paramName":"override-name-exist","content":"true","stringPart":"true"});
+			list_of_text_1.add({"paramName":"content","content":download_response_1,"stringPart":"false"});
+			upload_response_1 = invokeurl
+			[
+				url :"https://www.zohoapis.com/workdrive/api/v1/upload"
+				type :POST
+				headers:header_1
+				files:list_of_text_1
+				connection:"wd_files"
+			];
+			info "Upload Response 1: " + upload_response_1;
+			resource_id_1 = upload_response_1.getjson("data").getjson("attributes").getjson("resource_id");
+			//Generate the external link 3
+			data = Map();
+			data_param1 = Map();
+			att_param1 = Map();
+			att_param1.put("resource_id",resource_id_1);
+			att_param1.put("shared_type","everyone");
+			att_param1.put("role_id","34");
+			data_param1.put("attributes",att_param1);
+			data_param1.put("type","permissions");
+			data.put("data",data_param1);
+			generate_external_response_1 = invokeurl
+			[
+				url :"https://www.zohoapis.com/workdrive/api/v1/permissions"
+				type :POST
+				parameters:data.toString()
+				headers:header_data2
+			];
+			info "Generate External Response: " + generate_external_response_1;
+			external_url_1 = generate_external_response_1.getjson("data").getjson("attributes").getjson("permalink");
+			//End of External Link 3
+			mp2 = Map();
+			mp2.put("Status_Change_Link",external_url_1);
+			update_app_res = zoho.crm.updateRecord("Applications1",application_id,mp2);
+			info "Update Application Res:" + update_app_res;
+		}
+		//Forth
+		if(file_name.containsIgnoreCase("Medical Test Form") && stages.containsIgnoreCase("Visa Status Change/Entry Stamp is Complete"))
+		{
+			file_id_1 = app_detail_2.getjson("file_Id");
+			attachment_id_1 = app_detail_2.getjson("attachment_Id");
+			extn_1 = file_name.getSuffixIgnoreCase('.');
+			download_response_1 = invokeurl
+			[
+				url :"https://www.zohoapis.com/crm/v4/files?id=" + file_id_1
+				type :GET
+				connection:"crm_file_upload"
+			];
+			info "Download Response 1: " + download_response_1;
+			file_name_1 = file_name.getPrefix(".");
+			//Upload the file in Workdrive
+			header_1 = Map();
+			header_1.put("Accept","application/vnd.api+json");
+			list_of_text_1 = List();
+			list_of_text_1.add({"paramName":"filename","content":file_name_1.concat(".").concat(extn_1),"stringPart":"true"});
+			list_of_text_1.add({"paramName":"parent_id","content":parent_id,"stringPart":"true"});
+			list_of_text_1.add({"paramName":"override-name-exist","content":"true","stringPart":"true"});
+			list_of_text_1.add({"paramName":"content","content":download_response_1,"stringPart":"false"});
+			upload_response_1 = invokeurl
+			[
+				url :"https://www.zohoapis.com/workdrive/api/v1/upload"
+				type :POST
+				headers:header_1
+				files:list_of_text_1
+				connection:"wd_files"
+			];
+			info "Upload Response 1: " + upload_response_1;
+			resource_id_1 = upload_response_1.getjson("data").getjson("attributes").getjson("resource_id");
+			//Generate the external link 4
+			data = Map();
+			data_param1 = Map();
+			att_param1 = Map();
+			att_param1.put("resource_id",resource_id_1);
+			att_param1.put("shared_type","everyone");
+			att_param1.put("role_id","34");
+			data_param1.put("attributes",att_param1);
+			data_param1.put("type","permissions");
+			data.put("data",data_param1);
+			generate_external_response_1 = invokeurl
+			[
+				url :"https://www.zohoapis.com/workdrive/api/v1/permissions"
+				type :POST
+				parameters:data.toString()
+				headers:header_data2
+			];
+			info "Generate External Response: " + generate_external_response_1;
+			external_url_1 = generate_external_response_1.getjson("data").getjson("attributes").getjson("permalink");
+			//End of External Link 4
+			mp2 = Map();
+			mp2.put("Medical_Test_Form_Link",external_url_1);
+			update_app_res = zoho.crm.updateRecord("Applications1",application_id,mp2);
+		}
+		//Fifth
+		if(file_name.containsIgnoreCase("Passport") && stages.containsIgnoreCase("Visa Status Change/Entry Stamp is Complete"))
+		{
+			file_id_1 = app_detail_2.getjson("file_Id");
+			attachment_id_1 = app_detail_2.getjson("attachment_Id");
+			info "Attachment ID:" + attachment_id_1;
+			// 		info "File ID: " + file_id_1 ;
+			extn_1 = file_name.getSuffixIgnoreCase('.');
+			// 		info "EXTN: " + extn_1 ;
+			download_response_1 = invokeurl
+			[
+				url :"https://www.zohoapis.com/crm/v4/files?id=" + file_id_1
+				type :GET
+				connection:"crm_file_upload"
+			];
+			info "Download Response 1: " + download_response_1;
+			file_name_1 = file_name.getPrefix(".");
+			//Upload the file in Workdrive
+			header_1 = Map();
+			header_1.put("Accept","application/vnd.api+json");
+			list_of_text_1 = List();
+			list_of_text_1.add({"paramName":"filename","content":file_name_1.concat(".").concat(extn_1),"stringPart":"true"});
+			list_of_text_1.add({"paramName":"parent_id","content":parent_id,"stringPart":"true"});
+			list_of_text_1.add({"paramName":"override-name-exist","content":"true","stringPart":"true"});
+			list_of_text_1.add({"paramName":"content","content":download_response_1,"stringPart":"false"});
+			upload_response_1 = invokeurl
+			[
+				url :"https://www.zohoapis.com/workdrive/api/v1/upload"
+				type :POST
+				headers:header_1
+				files:list_of_text_1
+				connection:"wd_files"
+			];
+			info "Upload Response 1: " + upload_response_1;
+			resource_id_1 = upload_response_1.getjson("data").getjson("attributes").getjson("resource_id");
+			//Generate the external link 5
+			data = Map();
+			data_param1 = Map();
+			att_param1 = Map();
+			att_param1.put("resource_id",resource_id_1);
+			att_param1.put("shared_type","everyone");
+			att_param1.put("role_id","34");
+			data_param1.put("attributes",att_param1);
+			data_param1.put("type","permissions");
+			data.put("data",data_param1);
+			generate_external_response_1 = invokeurl
+			[
+				url :"https://www.zohoapis.com/workdrive/api/v1/permissions"
+				type :POST
+				parameters:data.toString()
+				headers:header_data2
+			];
+			info "Generate External Response: " + generate_external_response_1;
+			external_url_1 = generate_external_response_1.getjson("data").getjson("attributes").getjson("permalink");
+			//End of External Link 5
+			mp2 = Map();
+			mp2.put("Passport_Link",external_url_1);
+			update_app_res = zoho.crm.updateRecord("Applications1",application_id,mp2);
+		}
+		//Sixth
+		if(file_name.containsIgnoreCase("Medical Result") && (stages.containsIgnoreCase("E-ID Biometric Required") || stages.containsIgnoreCase("Visa Status Change/Entry Stamp is Complete")))
+		{
+			file_id_1 = app_detail_2.getjson("file_Id");
+			attachment_id_1 = app_detail_2.getjson("attachment_Id");
+			extn_1 = file_name.getSuffixIgnoreCase('.');
+			download_response_1 = invokeurl
+			[
+				url :"https://www.zohoapis.com/crm/v4/files?id=" + file_id_1
+				type :GET
+				connection:"crm_file_upload"
+			];
+			info "Download Response 1: " + download_response_1;
+			file_name_1 = file_name.getPrefix(".");
+			header_1 = Map();
+			header_1.put("Accept","application/vnd.api+json");
+			list_of_text_1 = List();
+			list_of_text_1.add({"paramName":"filename","content":file_name_1.concat(".").concat(extn_1),"stringPart":"true"});
+			list_of_text_1.add({"paramName":"parent_id","content":parent_id,"stringPart":"true"});
+			list_of_text_1.add({"paramName":"override-name-exist","content":"true","stringPart":"true"});
+			list_of_text_1.add({"paramName":"content","content":download_response_1,"stringPart":"false"});
+			upload_response_1 = invokeurl
+			[
+				url :"https://www.zohoapis.com/workdrive/api/v1/upload"
+				type :POST
+				headers:header_1
+				files:list_of_text_1
+				connection:"wd_files"
+			];
+			info "Upload Response 1: " + upload_response_1;
+			resource_id_1 = upload_response_1.getjson("data").getjson("attributes").getjson("resource_id");
+			//Generate the external link 6
+			data = Map();
+			data_param1 = Map();
+			att_param1 = Map();
+			att_param1.put("resource_id",resource_id_1);
+			att_param1.put("shared_type","everyone");
+			att_param1.put("role_id","34");
+			data_param1.put("attributes",att_param1);
+			data_param1.put("type","permissions");
+			data.put("data",data_param1);
+			generate_external_response_1 = invokeurl
+			[
+				url :"https://www.zohoapis.com/workdrive/api/v1/permissions"
+				type :POST
+				parameters:data.toString()
+				headers:header_data2
+			];
+			info "Generate External Response: " + generate_external_response_1;
+			external_url_1 = generate_external_response_1.getjson("data").getjson("attributes").getjson("permalink");
+			//End of External Link 5
+			mp2 = Map();
+			mp2.put("Result_of_the_medical_test_form_Link",external_url_1);
+			update_app_res = zoho.crm.updateRecord("Applications1",application_id,mp2);
+		}
+		//Seventh
+		if(file_name.containsIgnoreCase("EID Form") && (stages.containsIgnoreCase("E-ID Biometric Required") || stages.containsIgnoreCase("Visa Status Change/Entry Stamp is Complete")))
+		{
+			file_id_1 = app_detail_2.getjson("file_Id");
+			attachment_id_1 = app_detail_2.getjson("attachment_Id");
+			info "Attachment ID:" + attachment_id_1;
+			extn_1 = file_name.getSuffixIgnoreCase('.');
+			download_response_1 = invokeurl
+			[
+				url :"https://www.zohoapis.com/crm/v4/files?id=" + file_id_1
+				type :GET
+				connection:"crm_file_upload"
+			];
+			info "Download Response 1: " + download_response_1;
+			file_name_1 = file_name.getPrefix(".");
+			//Upload the file in Workdrive
+			header_1 = Map();
+			header_1.put("Accept","application/vnd.api+json");
+			list_of_text_1 = List();
+			list_of_text_1.add({"paramName":"filename","content":file_name_1.concat(".").concat(extn_1),"stringPart":"true"});
+			list_of_text_1.add({"paramName":"parent_id","content":parent_id,"stringPart":"true"});
+			list_of_text_1.add({"paramName":"override-name-exist","content":"true","stringPart":"true"});
+			list_of_text_1.add({"paramName":"content","content":download_response_1,"stringPart":"false"});
+			upload_response_1 = invokeurl
+			[
+				url :"https://www.zohoapis.com/workdrive/api/v1/upload"
+				type :POST
+				headers:header_1
+				files:list_of_text_1
+				connection:"wd_files"
+			];
+			info "Upload Response 1: " + upload_response_1;
+			resource_id_1 = upload_response_1.getjson("data").getjson("attributes").getjson("resource_id");
+			//Generate the external link 7
+			data = Map();
+			data_param1 = Map();
+			att_param1 = Map();
+			att_param1.put("resource_id",resource_id_1);
+			att_param1.put("shared_type","everyone");
+			att_param1.put("role_id","34");
+			data_param1.put("attributes",att_param1);
+			data_param1.put("type","permissions");
+			data.put("data",data_param1);
+			generate_external_response_1 = invokeurl
+			[
+				url :"https://www.zohoapis.com/workdrive/api/v1/permissions"
+				type :POST
+				parameters:data.toString()
+				headers:header_data2
+			];
+			info "Generate External Response: " + generate_external_response_1;
+			external_url_1 = generate_external_response_1.getjson("data").getjson("attributes").getjson("permalink");
+			//End of External Link 5
+			mp2 = Map();
+			mp2.put("Emirates_ID_Registration_Form_Link",external_url_1);
+			update_app_res = zoho.crm.updateRecord("Applications1",application_id,mp2);
+			info "Update Res: " + update_app_res;
+		}
+		//eight
+		if(file_name.containsIgnoreCase("Approved RV") && (stages.containsIgnoreCase("Notify Emirates ID Biometric Schedule") || stages.containsIgnoreCase("Residence Visa Approval Process") || stages.containsIgnoreCase("Passport is ready for Collection")))
+		{
+			file_id_1 = app_detail_2.getjson("file_Id");
+			attachment_id_1 = app_detail_2.getjson("attachment_Id");
+			info "Attachment ID:" + attachment_id_1;
+			// 		info "File ID: " + file_id_1 ;
+			extn_1 = file_name.getSuffixIgnoreCase('.');
+			// 		info "EXTN: " + extn_1 ;
+			download_response_1 = invokeurl
+			[
+				url :"https://www.zohoapis.com/crm/v4/files?id=" + file_id_1
+				type :GET
+				connection:"crm_file_upload"
+			];
+			info "Download Response 1: " + download_response_1;
+			file_name_1 = file_name.getPrefix(".");
+			//Upload the file in Workdrive
+			header_1 = Map();
+			header_1.put("Accept","application/vnd.api+json");
+			list_of_text_1 = List();
+			list_of_text_1.add({"paramName":"filename","content":file_name_1.concat(".").concat(extn_1),"stringPart":"true"});
+			list_of_text_1.add({"paramName":"parent_id","content":parent_id,"stringPart":"true"});
+			list_of_text_1.add({"paramName":"override-name-exist","content":"true","stringPart":"true"});
+			list_of_text_1.add({"paramName":"content","content":download_response_1,"stringPart":"false"});
+			upload_response_1 = invokeurl
+			[
+				url :"https://www.zohoapis.com/workdrive/api/v1/upload"
+				type :POST
+				headers:header_1
+				files:list_of_text_1
+				connection:"wd_files"
+			];
+			info "Upload Response 1: " + upload_response_1;
+			resource_id_1 = upload_response_1.getjson("data").getjson("attributes").getjson("resource_id");
+			//Generate the external link 8
+			data = Map();
+			data_param1 = Map();
+			att_param1 = Map();
+			att_param1.put("resource_id",resource_id_1);
+			att_param1.put("shared_type","everyone");
+			att_param1.put("role_id","34");
+			data_param1.put("attributes",att_param1);
+			data_param1.put("type","permissions");
+			data.put("data",data_param1);
+			generate_external_response_1 = invokeurl
+			[
+				url :"https://www.zohoapis.com/workdrive/api/v1/permissions"
+				type :POST
+				parameters:data.toString()
+				headers:header_data2
+			];
+			info "Generate External Response: " + generate_external_response_1;
+			external_url_1 = generate_external_response_1.getjson("data").getjson("attributes").getjson("permalink");
+			//End of External Link 8
+			mp2 = Map();
+			mp2.put("Approved_RV_Link",external_url_1);
+			update_app_res = zoho.crm.updateRecord("Applications1",application_id,mp2);
+			// 			update_app_attachment_res = zoho.crm.updateRecord("Applications1",application_id,{"Attachment":updatelist});
+			// 			info "Update Application Res:" + update_app_res;
+		}
+		//nine
+		if(file_name.containsIgnoreCase("Medical Result") && (stages.containsIgnoreCase("Notify Emirates ID Biometric Schedule") || stages.containsIgnoreCase("Residence Visa Approval Process")) && result_medical == null)
+		{
+			file_id_1 = app_detail_2.getjson("file_Id");
+			attachment_id_1 = app_detail_2.getjson("attachment_Id");
+			info "Attachment ID:" + attachment_id_1;
+			// 		info "File ID: " + file_id_1 ;
+			extn_1 = file_name.getSuffixIgnoreCase('.');
+			// 		info "EXTN: " + extn_1 ;
+			download_response_1 = invokeurl
+			[
+				url :"https://www.zohoapis.com/crm/v4/files?id=" + file_id_1
+				type :GET
+				connection:"crm_file_upload"
+			];
+			info "Download Response 1: " + download_response_1;
+			file_name_1 = file_name.getPrefix(".");
+			//Upload the file in Workdrive
+			header_1 = Map();
+			header_1.put("Accept","application/vnd.api+json");
+			list_of_text_1 = List();
+			list_of_text_1.add({"paramName":"filename","content":file_name_1.concat(".").concat(extn_1),"stringPart":"true"});
+			list_of_text_1.add({"paramName":"parent_id","content":parent_id,"stringPart":"true"});
+			list_of_text_1.add({"paramName":"override-name-exist","content":"true","stringPart":"true"});
+			list_of_text_1.add({"paramName":"content","content":download_response_1,"stringPart":"false"});
+			upload_response_1 = invokeurl
+			[
+				url :"https://www.zohoapis.com/workdrive/api/v1/upload"
+				type :POST
+				headers:header_1
+				files:list_of_text_1
+				connection:"wd_files"
+			];
+			info "Upload Response 1: " + upload_response_1;
+			resource_id_1 = upload_response_1.getjson("data").getjson("attributes").getjson("resource_id");
+			//Generate the external link 9
+			data = Map();
+			data_param1 = Map();
+			att_param1 = Map();
+			att_param1.put("resource_id",resource_id_1);
+			att_param1.put("shared_type","everyone");
+			att_param1.put("role_id","34");
+			data_param1.put("attributes",att_param1);
+			data_param1.put("type","permissions");
+			data.put("data",data_param1);
+			generate_external_response_1 = invokeurl
+			[
+				url :"https://www.zohoapis.com/workdrive/api/v1/permissions"
+				type :POST
+				parameters:data.toString()
+				headers:header_data2
+			];
+			info "Generate External Response: " + generate_external_response_1;
+			external_url_1 = generate_external_response_1.getjson("data").getjson("attributes").getjson("permalink");
+			//End of External Link 9
+			mp2 = Map();
+			mp2.put("Medical_Test_Form_Link",external_url_1);
+			update_app_res = zoho.crm.updateRecord("Applications1",application_id,mp2);
+		}
+	}
+}
