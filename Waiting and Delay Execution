@@ -1,0 +1,60 @@
+string standalone.wait(Int waitTimeInSeconds)
+{
+// Function to simulate a wait for a given number of seconds
+try 
+{
+	// Capture the current datetime in text format
+	startDateTimeTxt = now.toText("yyyy-MM-ddZHH:mm:ss");
+	// Simulate a sleep by calling an external service
+	sleep = invokeurl
+	[
+		url :"https://httpstat.us/200?sleep=" + waitTimeInSeconds * 1000
+		type :GET
+		detailed:true
+	];
+	// Check if the response code is not 2xx
+	if(!sleep.get("responseCode").startsWith("2"))
+	{
+		// Trigger an error to enter the catch block
+		info null.toNumber();
+		// Force an error
+	}
+}
+catch (err)
+{
+	// Handle the error by calculating the elapsed time
+	endDateTime = now;
+	startDateTime = startDateTimeTxt.toDateTime("yyyy-MM-ddZHH:mm:ss");
+	// Calculate the elapsed time in seconds
+	elapsedTime = startDateTime.timeBetween(endDateTime);
+	elapsedTimeInSeconds = 0;
+	elapsedTimeArray = elapsedTime.toList(":");
+	for each index i in elapsedTimeArray
+	{
+		position = elapsedTimeArray.size() - i - 1;
+		if(i == 0)
+		{
+			// seconds
+			elapsedTimeInSeconds = elapsedTimeInSeconds + elapsedTimeArray.get(position).toNumber();
+		}
+		if(i == 1)
+		{
+			// minutes
+			elapsedTimeInSeconds = elapsedTimeInSeconds + elapsedTimeArray.get(position).toNumber() * 60;
+		}
+		if(i == 2)
+		{
+			// hours
+			elapsedTimeInSeconds = elapsedTimeInSeconds + elapsedTimeArray.get(position).toNumber() * 3600;
+		}
+	}
+	// Calculate the remaining wait time
+	newWaitTimeInSeconds = waitTimeInSeconds - elapsedTimeInSeconds;
+	// Recursive call if there is remaining time
+	if(newWaitTimeInSeconds > 0)
+	{
+		standalone.wait(newWaitTimeInSeconds);
+	}
+}
+return "";
+}
